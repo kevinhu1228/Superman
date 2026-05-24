@@ -71,7 +71,7 @@ fi
 install_plugin_json() {
   local src="$1"
   local dst="$2"
-  python3 - "$SUPERMAN_DIR" "$src" "$dst" << 'PYEOF' || { echo "  ❌ Failed to rewrite paths in $(basename "$src") — aborting sync" >&2; exit 1; }
+  python3 - "$SUPERMAN_DIR" "$src" "$dst" << 'PYEOF' || { echo "  ❌ Failed to rewrite paths in $(basename "$src") — aborting sync" >&2; return 1; }
 import json, sys, re
 superman_dir, src, dst = sys.argv[1], sys.argv[2], sys.argv[3]
 with open(src) as f:
@@ -278,7 +278,10 @@ fi
 
 if [ "$DETECTED" -eq 0 ]; then
   echo "  No platform config detected. Running full sync..."
-  sync_claude
+  if ! sync_claude; then
+    echo "❌ Full sync failed — see errors above"
+    exit 1
+  fi
   SYNCED=1
 fi
 
