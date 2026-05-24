@@ -1,7 +1,5 @@
 # 🦸 Superman Plugin
 
-> OpenSpec + Superpowers + Agent Skills 融合插件 — 需求层 + 流程层 + 纪律层三位一体
-
 ## 安装
 
 ### npm（推荐）
