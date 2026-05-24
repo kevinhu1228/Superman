@@ -105,7 +105,7 @@ PYEOF
 install_opencode_js() {
   local src="$1"
   local dst="$2"
-  python3 - "$SUPERMAN_DIR" "$src" "$dst" << 'PYEOF'
+  python3 - "$SUPERMAN_DIR" "$src" "$dst" << 'PYEOF' || { echo "  ❌ Failed to inject SUPERMAN_ROOT in $(basename "$src") — aborting sync" >&2; return 1; }
 import sys, json
 superman_dir, src, dst = sys.argv[1], sys.argv[2], sys.argv[3]
 with open(src) as f:
@@ -129,7 +129,7 @@ sync_claude() {
   mkdir -p "$TARGET_DIR/.claude-plugin"
   install_plugin_json \
     "$SUPERMAN_DIR/platforms/claude/plugin.json" \
-    "$TARGET_DIR/.claude-plugin/superman-plugin.json"
+    "$TARGET_DIR/.claude-plugin/superman-plugin.json" || return 1
 
   # Merge CLAUDE.md (append Superman section if not present)
   if [ -f "$TARGET_DIR/CLAUDE.md" ]; then
@@ -159,7 +159,7 @@ sync_cursor() {
   mkdir -p "$TARGET_DIR/.cursor-plugin"
   install_plugin_json \
     "$SUPERMAN_DIR/platforms/cursor/plugin.json" \
-    "$TARGET_DIR/.cursor-plugin/superman-plugin.json"
+    "$TARGET_DIR/.cursor-plugin/superman-plugin.json" || return 1
 
   if [ ! -f "$TARGET_DIR/.cursorrules" ]; then
     cp "$SUPERMAN_DIR/platforms/cursor/cursorrules.md" "$TARGET_DIR/.cursorrules"
@@ -183,7 +183,7 @@ sync_gemini() {
   fi
   install_plugin_json \
     "$SUPERMAN_DIR/platforms/gemini/gemini-extension.json" \
-    "$TARGET_DIR/gemini-extension.json"
+    "$TARGET_DIR/gemini-extension.json" || return 1
   echo "  ✓ Installed gemini-extension.json"
 
   if [ -f "$TARGET_DIR/GEMINI.md" ]; then
@@ -206,7 +206,7 @@ sync_codex() {
   mkdir -p "$TARGET_DIR/.codex-plugin"
   install_plugin_json \
     "$SUPERMAN_DIR/platforms/codex/plugin.json" \
-    "$TARGET_DIR/.codex-plugin/superman-plugin.json"
+    "$TARGET_DIR/.codex-plugin/superman-plugin.json" || return 1
 
   if [ -f "$TARGET_DIR/AGENTS.md" ]; then
     if ! grep -q "Superman Plugin" "$TARGET_DIR/AGENTS.md" 2>/dev/null; then
