@@ -1,0 +1,24 @@
+{
+  "hooks": [
+    {
+      "event": "session_start",
+      "description": "Restore Superman context",
+      "action": {
+        "type": "activate_skill",
+        "condition": "file_exists:.superman/context/requirements.md",
+        "prompt": "Superman context found. Read .superman/context/requirements.md, .superman/context/decisions.md, and .superman/context/size-classification.md. Announce the current phase and task progress to the user."
+      }
+    },
+    {
+      "event": "user_message",
+      "description": "Auto-trigger size-classify for new requirements",
+      "pattern": "(?i)(需求|requirement|feature|implement|build|create|add|fix)",
+      "condition": "no_active_size_classification",
+      "action": {
+        "type": "suggest_skill",
+        "skill": "superman:size-classify",
+        "message": "检测到新需求描述。建议先运行 /superman:size-classify 进行分级。"
+      }
+    }
+  ]
+}

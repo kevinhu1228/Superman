@@ -1,0 +1,20 @@
+{
+  "gates": [
+    {
+      "id": "validate-skills",
+      "name": "Validate all skill files",
+      "command": "node scripts/validate-skills.js",
+      "expected_exit_code": 0,
+      "phase": "verify",
+      "required_level": "L"
+    },
+    {
+      "id": "spec-exists",
+      "name": "Spec file must exist for L-level requirements",
+      "command": "test -f .superman/phases/define/spec.md",
+      "expected_exit_code": 0,
+      "phase": "verify",
+      "required_level": "L"
+    }
+  ]
+}

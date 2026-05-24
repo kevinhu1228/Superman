@@ -1,0 +1,115 @@
+{
+  "name": "superman",
+  "version": "0.1.0",
+  "description": "Superman plugin for Gemini CLI",
+  "activation_command": "/superman",
+  "skills": [
+    {
+      "name": "superman:size-classify",
+      "path": "skills/define/size-classify/SKILL.md",
+      "trigger": "/superman:size-classify"
+    },
+    {
+      "name": "superman:brainstorming",
+      "path": "skills/define/brainstorming/SKILL.md",
+      "trigger": "/superman:brainstorming"
+    },
+    {
+      "name": "superman:propose",
+      "path": "skills/define/propose/SKILL.md",
+      "trigger": "/superman:propose"
+    },
+    {
+      "name": "superman:spec-review",
+      "path": "skills/define/spec-review/SKILL.md",
+      "trigger": "/superman:spec-review"
+    },
+    {
+      "name": "superman:writing-plans",
+      "path": "skills/define/writing-plans/SKILL.md",
+      "trigger": "/superman:writing-plans"
+    },
+    {
+      "name": "superman:archive",
+      "path": "skills/define/archive/SKILL.md",
+      "trigger": "/superman:archive"
+    },
+    {
+      "name": "superman:tdd",
+      "path": "skills/execute/tdd/SKILL.md",
+      "trigger": "/superman:tdd"
+    },
+    {
+      "name": "superman:subagent-dev",
+      "path": "skills/execute/subagent-dev/SKILL.md",
+      "trigger": "/superman:subagent-dev"
+    },
+    {
+      "name": "superman:incremental-impl",
+      "path": "skills/execute/incremental-impl/SKILL.md",
+      "trigger": "/superman:incremental-impl"
+    },
+    {
+      "name": "superman:security",
+      "path": "skills/execute/security/SKILL.md",
+      "trigger": "/superman:security"
+    },
+    {
+      "name": "superman:api-design",
+      "path": "skills/execute/api-design/SKILL.md",
+      "trigger": "/superman:api-design"
+    },
+    {
+      "name": "superman:frontend-ui",
+      "path": "skills/execute/frontend-ui/SKILL.md",
+      "trigger": "/superman:frontend-ui"
+    },
+    {
+      "name": "superman:debugging",
+      "path": "skills/execute/debugging/SKILL.md",
+      "trigger": "/superman:debugging"
+    },
+    {
+      "name": "superman:worktrees",
+      "path": "skills/execute/worktrees/SKILL.md",
+      "trigger": "/superman:worktrees"
+    },
+    {
+      "name": "superman:code-review",
+      "path": "skills/verify/code-review/SKILL.md",
+      "trigger": "/superman:code-review"
+    },
+    {
+      "name": "superman:production-ready",
+      "path": "skills/verify/production-ready/SKILL.md",
+      "trigger": "/superman:production-ready"
+    },
+    {
+      "name": "superman:spec-satisfied",
+      "path": "skills/verify/spec-satisfied/SKILL.md",
+      "trigger": "/superman:spec-satisfied"
+    },
+    {
+      "name": "superman:verification",
+      "path": "skills/verify/verification/SKILL.md",
+      "trigger": "/superman:verification"
+    },
+    {
+      "name": "superman:git-ship",
+      "path": "skills/verify/git-ship/SKILL.md",
+      "trigger": "/superman:git-ship"
+    },
+    {
+      "name": "superman:ci-gates",
+      "path": "skills/verify/ci-gates/SKILL.md",
+      "trigger": "/superman:ci-gates"
+    },
+    {
+      "name": "superman:retrospective",
+      "path": "skills/verify/retrospective/SKILL.md",
+      "trigger": "/superman:retrospective"
+    }
+  ],
+  "hooks": "hooks/hooks-gemini.json",
+  "activate_skill_tool": "activate_skill"
+}

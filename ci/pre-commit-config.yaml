@@ -1,0 +1,33 @@
+# Superman Plugin — Pre-commit Configuration
+# Install: pip install pre-commit && pre-commit install
+#
+# Spec validation is not wired as a hook because .superman/ is gitignored
+# and spec files never reach the staging area. Run manually when needed:
+#   node scripts/validate-spec.js [file ...]
+#   node scripts/validate-spec.js --strict
+
+repos:
+  - repo: local
+    hooks:
+      - id: validate-skills
+        name: Validate Superman skills structure
+        language: node
+        entry: node scripts/validate-skills.js
+        pass_filenames: false
+        files: ^skills/.*SKILL\.md$
+        types: [file]
+
+      - id: no-tbd-in-skills
+        name: Check for TBD/TODO in skill files
+        language: pygrep
+        entry: "(?i)\\bTBD\\b|\\bTODO\\b|\\b待定\\b"
+        files: ^skills/.*SKILL\.md$
+        types: [markdown]
+
+      - id: skill-goal-trigger
+        name: Verify SKILL.md has Goal and Trigger
+        language: pygrep
+        entry: "(?!.*\\*\\*Goal\\*\\*)"
+        files: ^skills/.*SKILL\.md$
+        types: [markdown]
+        args: [--multiline]

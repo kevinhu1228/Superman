@@ -1,0 +1,22 @@
+{
+  "hooks": [
+    {
+      "event": "session_start",
+      "description": "Restore Superman context from .superman/ files",
+      "action": {
+        "type": "inject_prompt",
+        "prompt": "Check if .superman/context/requirements.md exists. If yes, read all .superman/ files and announce: 'Superman context restored — currently at [phase], task [N/M]'. If no .superman/ context exists, remind the user to start with @superman size-classify."
+      }
+    },
+    {
+      "event": "file_save",
+      "description": "Remind about context persistence on code changes",
+      "filter": { "not": ".superman/**" },
+      "action": {
+        "type": "check",
+        "condition": "has_active_requirement",
+        "prompt": "If there is an active requirement in .superman/context/size-classification.md, ensure progress is being tracked in .superman/phases/execute/progress.md."
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "hooks": [
+    {
+      "event": "session_start",
+      "description": "Restore Superman context at session start",
+      "action": {
+        "type": "command",
+        "condition": "file_exists:.superman/context/requirements.md",
+        "prompt": "Read .superman/context/ files and announce current Superman workflow state."
+      }
+    },
+    {
+      "event": "tool_call",
+      "tool": "skill",
+      "description": "Log Superman skill invocations",
+      "filter": { "name_prefix": "superman:" },
+      "action": {
+        "type": "log",
+        "target": ".superman/context/decisions.md",
+        "format": "[{timestamp}] Skill invoked: {skill_name}"
+      }
+    }
+  ]
+}

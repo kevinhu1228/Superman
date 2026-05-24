@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if [ -f .superman/context/size-classification.md ]; then level=$(grep -o \"综合等级：[SML]\" .superman/context/size-classification.md | head -1 | cut -d\"：\" -f2); [ \"$level\" = \"L\" ] && echo \"[Superman] L-level requirement active — CI gates will be enforced at VERIFY phase\"; fi'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if [ -d .superman/context ] && [ ! -f .superman/context/requirements.md ]; then echo \"[Superman] Reminder: use superman:size-classify to classify your next requirement\"; fi'"
+          }
+        ]
+      }
+    ]
+  }
+}

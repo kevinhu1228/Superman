@@ -1,0 +1,116 @@
+{
+  "name": "superman",
+  "version": "0.1.0",
+  "description": "Superman plugin for Codex",
+  "tool": "skill",
+  "skills": [
+    {
+      "name": "superman:size-classify",
+      "path": "skills/define/size-classify/SKILL.md"
+    },
+    {
+      "name": "superman:brainstorming",
+      "path": "skills/define/brainstorming/SKILL.md"
+    },
+    {
+      "name": "superman:propose",
+      "path": "skills/define/propose/SKILL.md"
+    },
+    {
+      "name": "superman:spec-review",
+      "path": "skills/define/spec-review/SKILL.md"
+    },
+    {
+      "name": "superman:writing-plans",
+      "path": "skills/define/writing-plans/SKILL.md"
+    },
+    {
+      "name": "superman:archive",
+      "path": "skills/define/archive/SKILL.md"
+    },
+    {
+      "name": "superman:tdd",
+      "path": "skills/execute/tdd/SKILL.md"
+    },
+    {
+      "name": "superman:subagent-dev",
+      "path": "skills/execute/subagent-dev/SKILL.md"
+    },
+    {
+      "name": "superman:incremental-impl",
+      "path": "skills/execute/incremental-impl/SKILL.md"
+    },
+    {
+      "name": "superman:security",
+      "path": "skills/execute/security/SKILL.md"
+    },
+    {
+      "name": "superman:api-design",
+      "path": "skills/execute/api-design/SKILL.md"
+    },
+    {
+      "name": "superman:frontend-ui",
+      "path": "skills/execute/frontend-ui/SKILL.md"
+    },
+    {
+      "name": "superman:debugging",
+      "path": "skills/execute/debugging/SKILL.md"
+    },
+    {
+      "name": "superman:worktrees",
+      "path": "skills/execute/worktrees/SKILL.md"
+    },
+    {
+      "name": "superman:code-review",
+      "path": "skills/verify/code-review/SKILL.md"
+    },
+    {
+      "name": "superman:production-ready",
+      "path": "skills/verify/production-ready/SKILL.md"
+    },
+    {
+      "name": "superman:spec-satisfied",
+      "path": "skills/verify/spec-satisfied/SKILL.md"
+    },
+    {
+      "name": "superman:verification",
+      "path": "skills/verify/verification/SKILL.md"
+    },
+    {
+      "name": "superman:git-ship",
+      "path": "skills/verify/git-ship/SKILL.md"
+    },
+    {
+      "name": "superman:ci-gates",
+      "path": "skills/verify/ci-gates/SKILL.md"
+    },
+    {
+      "name": "superman:retrospective",
+      "path": "skills/verify/retrospective/SKILL.md"
+    }
+  ],
+  "slash_commands": [
+    { "command": "superman:size-classify",    "description": "对需求进行 S/M/L 三维评分分级" },
+    { "command": "superman:brainstorming",    "description": "结构化需求澄清（5 问深挖）" },
+    { "command": "superman:propose",          "description": "创建变更提案和规格草稿" },
+    { "command": "superman:spec-review",      "description": "规格自检（TBD 扫描 + 一致性 + 歧义）" },
+    { "command": "superman:writing-plans",    "description": "生成详细实施计划" },
+    { "command": "superman:archive",          "description": "归档已完成的变更" },
+    { "command": "superman:tdd",              "description": "测试驱动开发（SP 门控 + AS 反合理化）" },
+    { "command": "superman:subagent-dev",     "description": "并行 subagent 任务分发" },
+    { "command": "superman:incremental-impl", "description": "增量实现策略" },
+    { "command": "superman:security",         "description": "安全加固检查清单" },
+    { "command": "superman:api-design",       "description": "API 接口设计原则" },
+    { "command": "superman:frontend-ui",      "description": "前端 UI 工程纪律" },
+    { "command": "superman:debugging",        "description": "系统化调试流程" },
+    { "command": "superman:worktrees",        "description": "git worktree 隔离工作空间" },
+    { "command": "superman:code-review",      "description": "双向代码审查协议" },
+    { "command": "superman:production-ready", "description": "生产就绪门控检查（L 级必须）" },
+    { "command": "superman:spec-satisfied",   "description": "验证代码变更是否满足规格" },
+    { "command": "superman:verification",     "description": "变更有效性验证（运行应用）" },
+    { "command": "superman:git-ship",         "description": "分支决策 + 发布前核查清单" },
+    { "command": "superman:ci-gates",         "description": "L 级 CI 强制门控" },
+    { "command": "superman:retrospective",    "description": "结构化任务复盘 — 提炼最佳实践并写入 .superman/learnings/best-practices.md" }
+  ],
+  "hooks": "hooks/hooks-codex.json"
+}

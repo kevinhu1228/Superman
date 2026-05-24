@@ -1,0 +1,47 @@
+{
+  "name": "superman-plugin",
+  "version": "0.1.0",
+  "description": "Superman — OpenSpec + Superpowers + Agent Skills unified AI development plugin",
+  "bin": {
+    "superman": "bin/superman"
+  },
+  "scripts": {
+    "validate": "node scripts/validate-skills.js",
+    "test": "node scripts/validate-skills.js",
+    "sync": "bash scripts/sync-platforms.sh",
+    "prepublishOnly": "node scripts/validate-skills.js"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "platforms/",
+    "hooks/",
+    "ci/",
+    "scripts/",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "AGENTS.md",
+    "README.md"
+  ],
+  "keywords": [
+    "claude",
+    "cursor",
+    "gemini",
+    "codex",
+    "copilot",
+    "ai",
+    "skills",
+    "plugin",
+    "superpowers",
+    "openspec",
+    "agent-skills",
+    "workflow"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
