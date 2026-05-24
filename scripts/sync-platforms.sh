@@ -252,23 +252,23 @@ SYNCED=0
 DETECTED=0
 
 if [ -d "$TARGET_DIR/.claude" ] || [ -f "$TARGET_DIR/CLAUDE.md" ]; then
-  DETECTED=$((DETECTED+1)); sync_claude; SYNCED=$((SYNCED+1))
+  DETECTED=$((DETECTED+1)); sync_claude && SYNCED=$((SYNCED+1))
 fi
 
 if [ -d "$TARGET_DIR/.cursor" ] || [ -f "$TARGET_DIR/.cursorrules" ]; then
-  DETECTED=$((DETECTED+1)); sync_cursor; SYNCED=$((SYNCED+1))
+  DETECTED=$((DETECTED+1)); sync_cursor && SYNCED=$((SYNCED+1))
 fi
 
 if [ -f "$TARGET_DIR/GEMINI.md" ]; then
-  DETECTED=$((DETECTED+1)); sync_gemini; SYNCED=$((SYNCED+1))
+  DETECTED=$((DETECTED+1)); sync_gemini && SYNCED=$((SYNCED+1))
 fi
 
 if [ -f "$TARGET_DIR/AGENTS.md" ]; then
-  DETECTED=$((DETECTED+1)); sync_codex; SYNCED=$((SYNCED+1))
+  DETECTED=$((DETECTED+1)); sync_codex && SYNCED=$((SYNCED+1))
 fi
 
 if [ -d "$TARGET_DIR/.github" ]; then
-  DETECTED=$((DETECTED+1)); sync_copilot; SYNCED=$((SYNCED+1))
+  DETECTED=$((DETECTED+1)); sync_copilot && SYNCED=$((SYNCED+1))
 fi
 
 if [ -d "$TARGET_DIR/.opencode" ]; then

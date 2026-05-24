@@ -1,2 +1,9 @@
 #!/usr/bin/env bash
-exec "$(dirname "$(readlink -f "$0")")/../scripts/install.sh" "$@"
+# Resolve the real path of this script portably (macOS/BSD readlink has no -f flag)
+_self="$0"
+while [ -L "$_self" ]; do
+  _dir="$(cd "$(dirname "$_self")" && pwd)"
+  _link="$(readlink "$_self")"
+  case "$_link" in /*) _self="$_link" ;; *) _self="$_dir/$_link" ;; esac
+done
+exec "$(cd "$(dirname "$_self")" && pwd)/../scripts/install.sh" "$@"

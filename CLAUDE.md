@@ -28,7 +28,7 @@ At the start of every session:
 
 ## Key Rules
 
-- **Never skip phases for L-level requirements** — CI gates enforce this
+- **Never skip phases for L-level requirements** — enforced at two levels: (1) CI gates block merge at VERIFY time; (2) the PreToolUse hook in `.claude/hooks.json` is advisory-only (prints a reminder, does not block individual tool calls)
 - **Write to .superman/ immediately** when user states requirements or makes decisions
 - **Do not self-downgrade** requirement levels — user must explicitly approve with reason
 - **Invoke skills proactively** — if the situation matches a skill's trigger, invoke it before acting

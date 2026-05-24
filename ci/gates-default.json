@@ -11,7 +11,7 @@
     {
       "id": "spec-exists",
       "name": "Spec file must exist for L-level requirements",
-      "command": "test -f .superman/phases/define/spec.md",
+      "command": "node -e \"var fs=require('fs');process.exit(fs.existsSync('.superman/phases/define/spec.md')?0:1)\"",
       "expected_exit_code": 0,
       "phase": "verify",
       "required_level": "L"

@@ -18,7 +18,10 @@ const REQUIRED_SECTIONS = [
   },
 ];
 
-const PLACEHOLDER_RE = /\bTBD\b|\bTODO\b|\bFIXME\b|【待定】|【TODO】|\b待定\b|\b稍后补充\b/i;
+// \b word-boundary anchors are ineffective around CJK characters (they are \W,
+// so \b adjacent to CJK is only true when preceded by a \w char — not at line
+// start or after spaces). Chinese tokens are matched as plain substrings instead.
+const PLACEHOLDER_RE = /\bTBD\b|\bTODO\b|\bFIXME\b|【待定】|【TODO】|待定|稍后补充/i;
 
 const SPEC_REVIEW_PASSED_RE = /Spec Review: PASSED/;
 

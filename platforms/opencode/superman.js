@@ -58,6 +58,7 @@ function register(plugin) {
 
   // Session start hook: restore superman context
   plugin.on('session:start', async (context) => {
+    if (!context.workspaceRoot) return;
     const requirementsPath = path.join(context.workspaceRoot, '.superman/context/requirements.md');
     if (!fs.existsSync(requirementsPath)) return;
 
