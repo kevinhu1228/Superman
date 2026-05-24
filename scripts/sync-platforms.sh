@@ -224,7 +224,7 @@ sync_copilot() {
   echo "  Syncing GitHub Copilot..."
   mkdir -p "$TARGET_DIR/.github"
   if [ ! -f "$TARGET_DIR/.github/copilot-instructions.md" ]; then
-    cp "$SUPERMAN_DIR/platforms/copilot/copilot-instructions.md" "$TARGET_DIR/.github/copilot-instructions.md"
+    cp "$SUPERMAN_DIR/platforms/copilot/copilot-instructions.md" "$TARGET_DIR/.github/copilot-instructions.md" || return 1
     echo "  ✓ Created .github/copilot-instructions.md"
   else
     echo "  ⚠ .github/copilot-instructions.md exists — manual merge may be needed"
