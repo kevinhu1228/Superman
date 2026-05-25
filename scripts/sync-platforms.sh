@@ -123,6 +123,24 @@ with open(dst, 'w') as f:
 PYEOF
 }
 
+# 将 gates-default.json 的 node scripts/ 命令改写为绝对路径后写入目标位置
+install_gates_json() {
+  local src="$1"
+  local dst="$2"
+  python3 - "$SUPERMAN_DIR" "$src" "$dst" << 'PYEOF' || { echo "  ❌ Failed to rewrite paths in $(basename "$src") — aborting sync" >&2; return 1; }
+import json, sys
+superman_dir, src, dst = sys.argv[1], sys.argv[2], sys.argv[3]
+with open(src) as f:
+    d = json.load(f)
+for g in d.get("gates", []):
+    cmd = g.get("command", "")
+    if cmd.startswith("node scripts/"):
+        g["command"] = "node " + superman_dir + "/scripts/" + cmd[len("node scripts/"):]
+with open(dst, "w") as f:
+    json.dump(d, f, indent=2, ensure_ascii=False)
+PYEOF
+}
+
 # Sync Claude Code
 sync_claude() {
   echo "  Syncing Claude Code..."
@@ -212,11 +230,14 @@ sync_codex() {
     if ! grep -q "Superman Plugin" "$TARGET_DIR/AGENTS.md" 2>/dev/null; then
       echo "" >> "$TARGET_DIR/AGENTS.md" || return 1
       cat "$SUPERMAN_DIR/AGENTS.md" >> "$TARGET_DIR/AGENTS.md" || return 1
+      echo "  ✓ Appended Superman instructions to existing AGENTS.md"
+    else
+      echo "  ✓ AGENTS.md already contains Superman instructions (skipped)"
     fi
   else
     cp "$SUPERMAN_DIR/AGENTS.md" "$TARGET_DIR/AGENTS.md" || return 1
+    echo "  ✓ Created AGENTS.md"
   fi
-  echo "  ✓ Codex configured"
 }
 
 # Sync Copilot
@@ -258,7 +279,7 @@ if [ -d "$TARGET_DIR/.cursor" ] || [ -f "$TARGET_DIR/.cursorrules" ]; then
   DETECTED=$((DETECTED+1)); sync_cursor && SYNCED=$((SYNCED+1))
 fi
 
-if [ -f "$TARGET_DIR/GEMINI.md" ]; then
+if [ -f "$TARGET_DIR/GEMINI.md" ] || [ -f "$TARGET_DIR/gemini-extension.json" ]; then
   DETECTED=$((DETECTED+1)); sync_gemini && SYNCED=$((SYNCED+1))
 fi
 
@@ -284,19 +305,20 @@ if [ "$DETECTED" -eq 0 ]; then
   SYNCED=1
 fi
 
-# Sync CI gates
-if [ -f "$SUPERMAN_DIR/ci/gates-default.json" ]; then
-  mkdir -p "$TARGET_DIR/.superman/ci" \
-    || { echo "  ❌ Failed to create .superman/ci directory — check permissions" >&2; exit 1; }
-  cp "$SUPERMAN_DIR/ci/gates-default.json" "$TARGET_DIR/.superman/ci/gates.json" \
-    || { echo "  ❌ Failed to install CI gates — check permissions" >&2; exit 1; }
-  echo "  ✓ CI gates installed"
-fi
-
 if [ "$DETECTED" -gt 0 ] && [ "$SYNCED" -lt "$DETECTED" ]; then
   echo ""
   echo "❌ $((DETECTED - SYNCED)) platform sync(s) failed — see errors above"
   exit 1
+fi
+
+# Sync CI gates
+if [ -f "$SUPERMAN_DIR/ci/gates-default.json" ]; then
+  mkdir -p "$TARGET_DIR/.superman/ci" \
+    || { echo "  ❌ Failed to create .superman/ci directory — check permissions" >&2; exit 1; }
+  install_gates_json \
+    "$SUPERMAN_DIR/ci/gates-default.json" \
+    "$TARGET_DIR/.superman/ci/gates.json" || exit 1
+  echo "  ✓ CI gates installed"
 fi
 
 echo ""
