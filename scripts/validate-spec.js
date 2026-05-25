@@ -19,9 +19,10 @@ const REQUIRED_SECTIONS = [
 ];
 
 // \b anchors don't work around CJK characters. Use negative lookahead so that
-// 待定/稍后补充 match when NOT followed by another CJK char or ASCII word char.
-// This catches 版本待定 / 功能待定 while skipping 待定义 / 稍后补充说明…
-const PLACEHOLDER_RE = /\bTBD\b|\bTODO\b|\bFIXME\b|【待定】|【TODO】|待定(?![一-鿿\w])|稍后补充(?![一-鿿\w])/i;
+// 待定/稍后补充 match when NOT followed by another CJK char (excludes compounds
+// like 待定义/稍后补充说明 while catching end-of-line, punctuation, and ASCII
+// contexts such as 待定TODO or v1待定release).
+const PLACEHOLDER_RE = /\bTBD\b|\bTODO\b|\bFIXME\b|【待定】|【TODO】|待定(?![一-鿿])|稍后补充(?![一-鿿])/i;
 
 const SPEC_REVIEW_PASSED_RE = /Spec Review: PASSED/;
 

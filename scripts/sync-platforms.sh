@@ -126,7 +126,7 @@ PYEOF
 # Sync Claude Code
 sync_claude() {
   echo "  Syncing Claude Code..."
-  mkdir -p "$TARGET_DIR/.claude-plugin"
+  mkdir -p "$TARGET_DIR/.claude-plugin" || return 1
   install_plugin_json \
     "$SUPERMAN_DIR/platforms/claude/plugin.json" \
     "$TARGET_DIR/.claude-plugin/superman-plugin.json" || return 1
@@ -134,7 +134,7 @@ sync_claude() {
   # Merge CLAUDE.md (append Superman section if not present)
   if [ -f "$TARGET_DIR/CLAUDE.md" ]; then
     if ! grep -q "Superman Plugin" "$TARGET_DIR/CLAUDE.md" 2>/dev/null; then
-      echo "" >> "$TARGET_DIR/CLAUDE.md"
+      echo "" >> "$TARGET_DIR/CLAUDE.md" || return 1
       cat "$SUPERMAN_DIR/CLAUDE.md" >> "$TARGET_DIR/CLAUDE.md" || return 1
       echo "  ✓ Appended Superman instructions to existing CLAUDE.md"
     else
@@ -147,7 +147,7 @@ sync_claude() {
 
   # Install hooks
   if [ -f "$SUPERMAN_DIR/hooks/hooks.json" ]; then
-    mkdir -p "$TARGET_DIR/.claude"
+    mkdir -p "$TARGET_DIR/.claude" || return 1
     cp "$SUPERMAN_DIR/hooks/hooks.json" "$TARGET_DIR/.claude/hooks.json" || return 1
     echo "  ✓ Installed Claude Code hooks"
   fi
@@ -156,7 +156,7 @@ sync_claude() {
 # Sync Cursor
 sync_cursor() {
   echo "  Syncing Cursor..."
-  mkdir -p "$TARGET_DIR/.cursor-plugin"
+  mkdir -p "$TARGET_DIR/.cursor-plugin" || return 1
   install_plugin_json \
     "$SUPERMAN_DIR/platforms/cursor/plugin.json" \
     "$TARGET_DIR/.cursor-plugin/superman-plugin.json" || return 1
@@ -188,7 +188,7 @@ sync_gemini() {
 
   if [ -f "$TARGET_DIR/GEMINI.md" ]; then
     if ! grep -q "Superman Plugin" "$TARGET_DIR/GEMINI.md" 2>/dev/null; then
-      echo "" >> "$TARGET_DIR/GEMINI.md"
+      echo "" >> "$TARGET_DIR/GEMINI.md" || return 1
       cat "$SUPERMAN_DIR/GEMINI.md" >> "$TARGET_DIR/GEMINI.md" || return 1
       echo "  ✓ Appended Superman instructions to existing GEMINI.md"
     else
@@ -203,14 +203,14 @@ sync_gemini() {
 # Sync Codex
 sync_codex() {
   echo "  Syncing Codex..."
-  mkdir -p "$TARGET_DIR/.codex-plugin"
+  mkdir -p "$TARGET_DIR/.codex-plugin" || return 1
   install_plugin_json \
     "$SUPERMAN_DIR/platforms/codex/plugin.json" \
     "$TARGET_DIR/.codex-plugin/superman-plugin.json" || return 1
 
   if [ -f "$TARGET_DIR/AGENTS.md" ]; then
     if ! grep -q "Superman Plugin" "$TARGET_DIR/AGENTS.md" 2>/dev/null; then
-      echo "" >> "$TARGET_DIR/AGENTS.md"
+      echo "" >> "$TARGET_DIR/AGENTS.md" || return 1
       cat "$SUPERMAN_DIR/AGENTS.md" >> "$TARGET_DIR/AGENTS.md" || return 1
     fi
   else
@@ -222,7 +222,7 @@ sync_codex() {
 # Sync Copilot
 sync_copilot() {
   echo "  Syncing GitHub Copilot..."
-  mkdir -p "$TARGET_DIR/.github"
+  mkdir -p "$TARGET_DIR/.github" || return 1
   if [ ! -f "$TARGET_DIR/.github/copilot-instructions.md" ]; then
     cp "$SUPERMAN_DIR/platforms/copilot/copilot-instructions.md" "$TARGET_DIR/.github/copilot-instructions.md" || return 1
     echo "  ✓ Created .github/copilot-instructions.md"

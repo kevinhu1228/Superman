@@ -6,7 +6,7 @@ while [ -L "$_self" ]; do
   _link="$(readlink "$_self")"
   case "$_link" in /*) _self="$_link" ;; *) _self="$_dir/$_link" ;; esac
 done
-_scripts="$(cd "$(dirname "$_self")" && pwd)/../scripts"
+_scripts="$(cd "$(dirname "$_self")/.." && pwd)/scripts"
 if [ ! -f "$_scripts/install.sh" ]; then
   echo "superman: cannot locate scripts/install.sh (resolved to $_scripts/install.sh)" >&2
   echo "  If superman was installed via hardlink, re-install with: npm install -g" >&2
