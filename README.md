@@ -1,4 +1,4 @@
-# 🦸 Superman Plugin
+﻿# 🦸 Superman Plugin
 
 > **The OpenSpec + Superpowers + Agent Skills unified AI development workflow plugin**
 >
@@ -9,7 +9,7 @@
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org/)
 [![Platforms](https://img.shields.io/badge/platforms-Claude%20%7C%20Cursor%20%7C%20Gemini%20%7C%20Codex%20%7C%20Copilot%20%7C%20OpenCode-blue.svg)](#platform-support)
 
-**README:** [English](README.md) | [Simplified Chinese](README-zh_CN.md) | [Traditional Chinese](README-zh_TW.md)
+**README:** [English](README.md) | [简体中文](README-zh_CN.md) | [繁體中文](README-zh_TW.md)
 
 ---
 
