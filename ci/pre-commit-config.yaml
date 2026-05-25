@@ -20,7 +20,7 @@ repos:
       - id: no-tbd-in-skills
         name: Check for TBD/TODO in skill files
         language: pygrep
-        entry: "(?i)\\bTBD\\b|\\bTODO\\b|【待定】|【TODO】|待定(?![一-鿿])|稍后补充(?![一-鿿])"
+        entry: "(?i)\\bTBD\\b|\\bTODO\\b"
         files: ^skills/.*SKILL\.md$
         types: [markdown]
 

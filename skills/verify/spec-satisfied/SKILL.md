@@ -1,70 +1,70 @@
 # superman:spec-satisfied
 
-**Goal**: 对照 DEFINE 阶段生成的 spec.md，逐条验证 EXECUTE 阶段的代码变更是否完整实现了所有规格要求。
+**Goal**: Verify line by line against the spec.md generated in the DEFINE phase that the code changes from the EXECUTE phase fully implement all spec requirements.
 
-**Trigger**: VERIFY 阶段开始时，在 code-review 之前触发（L 级必须，M 级运行 Lite 版本，S 级跳过）。
+**Trigger**: At the start of the VERIFY phase, before code-review (required for L level, Lite version for M level, skipped for S level).
 
 ---
 
-## 执行步骤
+## Execution Steps
 
-### Step 1: 读取规格
+### Step 1: Read the Spec
 
-读取 `.superman/phases/define/spec.md`，提取所有功能要求项。
+Read `.superman/phases/define/spec.md` and extract all functional requirement items.
 
-若 spec.md 不存在：
-- L 级：报错，VERIFY 不能继续，需先补写 spec.md
-- M 级：改用 `.superman/phases/define/tasks.md` 作为验证依据
+If spec.md does not exist:
+- L level: error, VERIFY cannot continue — spec.md must be written first
+- M level: use `.superman/phases/define/tasks.md` as the verification basis instead
 
-### Step 2: 对照代码
+### Step 2: Compare Against Code
 
-对每个规格要求，通过以下方式验证实现：
-- 读取相关代码文件
-- 运行相关测试（`npm test` / `pytest` / `go test`）
-- 若有 API 端点：通过 curl 或 Chrome DevTools MCP 验证
+For each spec requirement, verify the implementation by:
+- Reading relevant code files
+- Running relevant tests (`npm test` / `pytest` / `go test`)
+- If there are API endpoints: verify via curl or Chrome DevTools MCP
 
-### Step 3: 生成验证报告
+### Step 3: Generate Verification Report
 
-将结果写入 `.superman/phases/verify/spec-check.md`：
+Write the results to `.superman/phases/verify/spec-check.md`:
 
 ```
-# 规格满足度验证报告
+# Spec Satisfaction Verification Report
 
-**验证时间：** {ISO 时间戳}
-**需求等级：** {L/M/S}
-**Spec 来源：** .superman/phases/define/spec.md
+**Verified at:** {ISO timestamp}
+**Requirement level:** {L/M/S}
+**Spec source:** .superman/phases/define/spec.md
 
-## 验证结果
+## Verification Results
 
-| # | 规格要求 | 状态 | 验证方式 | 备注 |
-|---|---------|------|---------|------|
-| 1 | 用户注册支持邮件+密码 | ✅ 满足 | test: test_user_registration | - |
-| 2 | 密码强度检查（8位+数字+大写） | ✅ 满足 | test: test_password_strength | - |
-| 3 | 注册后发送欢迎邮件 | ❌ 未实现 | 无相关测试，代码搜索未找到邮件发送逻辑 | 阻塞 |
+| # | Spec Requirement | Status | Verification Method | Notes |
+|---|-----------------|--------|---------------------|-------|
+| 1 | User registration supports email + password | ✅ Satisfied | test: test_user_registration | - |
+| 2 | Password strength check (8 chars + digit + uppercase) | ✅ Satisfied | test: test_password_strength | - |
+| 3 | Send welcome email after registration | ❌ Not implemented | No related tests; code search found no email sending logic | Blocking |
 
-## 总结
+## Summary
 
-- ✅ 已满足：{N} 项
-- ❌ 未满足：{M} 项
-- ⚠️ 部分满足：{K} 项
+- ✅ Satisfied: {N} items
+- ❌ Not satisfied: {M} items
+- ⚠️ Partially satisfied: {K} items
 
-**结论：PASS / FAIL**
+**Conclusion: PASS / FAIL**
 ```
 
-### Step 4: 处理未满足项
+### Step 4: Handle Unsatisfied Items
 
-若存在 ❌ 未满足项：
-1. 报告给用户，说明缺少的实现
-2. 用户确认 → 返回 EXECUTE 阶段补充实现
-3. 实现完成后重新执行 spec-satisfied
+If there are ❌ unsatisfied items:
+1. Report to the user, explain what implementation is missing
+2. User confirms → return to the EXECUTE phase to add the implementation
+3. After implementation is complete, re-run spec-satisfied
 
-若全部满足（✅）：
-1. 在报告末尾追加 `*Spec Satisfied: PASSED [{ISO 时间戳}]*`
-2. 继续 `superman:verification`
+If all items are satisfied (✅):
+1. Append `*Spec Satisfied: PASSED [{ISO timestamp}]*` to the end of the report
+2. Continue to `superman:verification`
 
-## Lite 模式（M 级）
+## Lite Mode (M level)
 
-使用 tasks.md 替代 spec.md：
-- 只验证 tasks.md 中每个任务是否有对应实现和测试
-- 不做深度规格比对
-- 生成简化报告到 spec-check.md
+Use tasks.md instead of spec.md:
+- Only verify that each task in tasks.md has a corresponding implementation and test
+- No deep spec comparison
+- Generate a simplified report to spec-check.md

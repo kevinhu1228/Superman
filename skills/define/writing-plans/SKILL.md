@@ -1,38 +1,38 @@
 # superman:writing-plans
 
-**Goal**: 基于 `.superman/phases/define/tasks.md` 生成详细实施计划，保存到 `docs/superpowers/plans/`，为 EXECUTE 阶段提供精确指引。
+**Goal**: Generate a detailed implementation plan based on `.superman/phases/define/tasks.md`, save it to `docs/superpowers/plans/`, and provide precise guidance for the EXECUTE phase.
 
-**Trigger**: DEFINE 阶段规格确认后，进入 EXECUTE 之前自动调用。
+**Trigger**: After the DEFINE phase spec is confirmed, automatically invoked before entering EXECUTE.
 
 ---
 
-## 说明
+## Notes
 
-本技能是 Superpowers writing-plans 在 Superman 体系中的直接保留，行为完全一致。
+This skill is the direct port of Superpowers writing-plans into the Superman system, with identical behavior.
 
-## 关键要点
+## Key Points
 
-- 每个任务包含：具体文件路径、完整代码（非伪代码）、可运行的测试命令和预期输出
-- 遵循 TDD：每个实现步骤前先写失败测试
-- 不写 "TBD"、"similar to above"、"handle edge cases" 等占位符
-- 计划保存到：`docs/superpowers/plans/YYYY-MM-DD-{feature}.md`
+- Each task includes: specific file paths, complete code (not pseudocode), runnable test commands and expected output
+- Follow TDD: write the failing test before each implementation step
+- Do not write `TBD`, `similar to above`, `handle edge cases`, or other placeholders
+- Plans are saved to: `docs/superpowers/plans/YYYY-MM-DD-{feature}.md`
 
-## 计划文档格式
+## Plan Document Format
 
-每个计划必须以如下 header 开始：
+Each plan must begin with the following header:
 
 ```
 # [Feature Name] Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superman:subagent-dev or superman:tdd to implement this plan task-by-task.
 
-**Goal:** [一句话描述目标]
-**Architecture:** [2-3 句架构描述]
-**Tech Stack:** [关键技术栈]
+**Goal:** [one-sentence goal description]
+**Architecture:** [2-3 sentence architecture description]
+**Tech Stack:** [key technologies]
 
 ---
 ```
 
-## 执行完成后
+## After Completion
 
-将 plan.md 路径写入 `.superman/phases/execute/plan.md`（作为引用），然后调用 `superman:subagent-dev` 或 `superman:tdd` 开始执行。
+Write the plan.md path to `.superman/phases/execute/plan.md` (as a reference), then invoke `superman:subagent-dev` or `superman:tdd` to begin execution.

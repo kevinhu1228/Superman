@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// validate-skills.js — 校验所有 skills/ 下的 SKILL.md 结构完整性
+// validate-skills.js — validate SKILL.md structure for all skills/
 
 const fs = require('fs');
 const path = require('path');
@@ -30,13 +30,13 @@ for (const phase of PHASES) {
     if (!content.startsWith('# ')) {
       errors.push(`${skillFile}: must start with a level-1 heading`);
     }
-    const hasGoal = content.includes('**Goal**') || content.includes('## Goal') || content.includes('## 目标');
+    const hasGoal = content.includes('**Goal**') || content.includes('## Goal');
     if (!hasGoal) {
-      errors.push(`${skillFile}: missing Goal section (**Goal**, ## Goal, or ## 目标)`);
+      errors.push(`${skillFile}: missing Goal section (**Goal** or ## Goal)`);
     }
-    const hasTrigger = content.includes('**Trigger**') || content.includes('## Trigger') || content.includes('## 触发时机');
+    const hasTrigger = content.includes('**Trigger**') || content.includes('## Trigger');
     if (!hasTrigger) {
-      errors.push(`${skillFile}: missing Trigger section (**Trigger**, ## Trigger, or ## 触发时机)`);
+      errors.push(`${skillFile}: missing Trigger section (**Trigger** or ## Trigger)`);
     }
     checked++;
   }

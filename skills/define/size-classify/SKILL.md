@@ -1,61 +1,61 @@
 # superman:size-classify
 
-**Goal**: 对输入需求进行三维度评分，输出 S/M/L 分级结果，并将结果写入 `.superman/context/size-classification.md`。
+**Goal**: Score an incoming requirement across three dimensions and output an S/M/L classification, writing the result to `.superman/context/size-classification.md`.
 
-**Trigger**: 用户提出新需求时，在任何其他技能调用之前首先触发本技能。
+**Trigger**: When the user raises a new requirement, invoke this skill before any other skill.
 
 ---
 
-## 评分方法
+## Scoring Method
 
-对需求进行三个独立维度评分（各 1-3 分）：
+Score the requirement on three independent dimensions (1–3 each):
 
-| 分数 | 维度 A：改动范围 | 维度 B：时间估算 | 维度 C：影响面 |
-|------|----------------|----------------|---------------|
-| 1 | 单文件/单函数 | < 30 分钟 | 仅私有代码 |
-| 2 | 跨模块/多文件 | 30 分钟 – 2 小时 | 涉及 API/对外接口 |
-| 3 | 新系统/架构重构 | > 2 小时 | 多团队/生产环境影响 |
+| Score | Dimension A: Change Scope | Dimension B: Time Estimate | Dimension C: Impact |
+|-------|--------------------------|---------------------------|---------------------|
+| 1 | Single file / single function | < 30 minutes | Private code only |
+| 2 | Cross-module / multiple files | 30 minutes – 2 hours | Touches API / public interface |
+| 3 | New system / architectural refactor | > 2 hours | Multi-team / production impact |
 
-**综合得分 = max(A, B, C)**，任一维度达到阈值即整体升级。
+**Overall score = max(A, B, C)** — any dimension reaching the threshold upgrades the whole requirement.
 
-## 分级规则
+## Classification Rules
 
-| 等级 | 条件 | DEFINE | EXECUTE | VERIFY |
-|------|------|--------|---------|--------|
-| S 小 | max ≤ 1 | 跳过 | 完整执行 | 跳过 |
-| M 中 | max = 2 | Lite | 完整执行 | Lite |
-| L 大 | max = 3 | 强制完整 | 强制完整 | 强制完整 |
+| Level | Condition | DEFINE | EXECUTE | VERIFY |
+|-------|-----------|--------|---------|--------|
+| S Small | max ≤ 1 | Skip | Full | Skip |
+| M Medium | max = 2 | Lite | Full | Lite |
+| L Large | max = 3 | Full (required) | Full (required) | Full (required) |
 
-## 执行步骤
+## Execution Steps
 
-1. 向用户展示三维度评分表，逐一询问或根据需求描述自行评分
-2. 计算 `max(A, B, C)` 得出等级
-3. 立即将结果写入 `.superman/context/size-classification.md`：
+1. Show the three-dimension scoring table to the user; ask for scores or self-score based on the requirement description
+2. Compute `max(A, B, C)` to determine the level
+3. Immediately write the result to `.superman/context/size-classification.md`:
 
 ```markdown
-# 需求分级结果
+# Requirement Classification
 
-**需求描述：** {用户原始需求}
-**评分时间：** {ISO 时间戳}
+**Requirement:** {original user requirement}
+**Classified at:** {ISO timestamp}
 
-| 维度 | 评分 | 依据 |
-|------|------|------|
-| A 改动范围 | {1/2/3} | {说明} |
-| B 时间估算 | {1/2/3} | {说明} |
-| C 影响面   | {1/2/3} | {说明} |
+| Dimension | Score | Rationale |
+|-----------|-------|-----------|
+| A Change Scope | {1/2/3} | {explanation} |
+| B Time Estimate | {1/2/3} | {explanation} |
+| C Impact       | {1/2/3} | {explanation} |
 
-**综合等级：{S/M/L}**
-**路由：** {DEFINE→EXECUTE→VERIFY 或 跳过说明}
+**Overall Level: {S/M/L}**
+**Routing:** {DEFINE→EXECUTE→VERIFY or skip explanation}
 
 ---
-*注：AI 不得自行降级。用户手动降级须在 requirements.md 中记录原因。*
+*Note: AI must not self-downgrade. User-initiated downgrades must be recorded with a reason in requirements.md.*
 ```
 
-4. 向用户宣告分级结果，说明将执行哪些阶段
-5. 调用下一个技能（M/L 级：`superman:brainstorming`；S 级：跳至对应 EXECUTE 技能）
+4. Announce the classification result to the user and explain which phases will be executed
+5. Invoke the next skill (M/L: `superman:brainstorming`; S: jump to the appropriate EXECUTE skill)
 
-## 降级规则
+## Downgrade Rules
 
-AI 不得自行降级。如用户请求降级：
-1. 在 `requirements.md` 末尾追加：`[降级记录] {时间} 用户将 {原等级} 降为 {新等级}，原因：{用户说明}`
-2. 更新 `size-classification.md` 的等级字段，注明 "手动降级"
+AI must not self-downgrade. If the user requests a downgrade:
+1. Append to the end of `requirements.md`: `[Downgrade Record] {timestamp} User downgraded {original level} to {new level}, reason: {user explanation}`
+2. Update the level field in `size-classification.md` and note "manually downgraded"

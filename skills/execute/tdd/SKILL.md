@@ -1,82 +1,82 @@
 # superman:tdd
 
-**Goal**: 通过强制"先写测试后实现"的执行顺序，配合反合理化防线，确保每个实现步骤都有测试覆盖，不接受任何跳过测试的理由。
+**Goal**: Ensure every implementation step has test coverage by enforcing a strict "write tests first" execution order backed by an anti-rationalization firewall. No reason to skip tests is accepted.
 
-**Trigger**: EXECUTE 阶段开始时自动调用，或在 subagent-dev 中每个 task 开始执行前触发。
+**Trigger**: Automatically invoked at the start of the EXECUTE phase, or before each task begins in subagent-dev.
 
 ---
 
-## 核心规则（硬性门控）
+## Core Rules (hard gates)
 
-**以下顺序不可更改：**
+**The following order is non-negotiable:**
 
-写失败测试 → 确认测试失败（RED）→ 写最小实现 → 确认测试通过（GREEN）→ 提交
+Write failing test → Confirm test fails (RED) → Write minimal implementation → Confirm test passes (GREEN) → Commit
 
-任何绕过此顺序的理由都是无效的。
+Any reason to bypass this order is invalid.
 
-## 反合理化防线（Agent Skills 贡献）
+## Anti-Rationalization Firewall (Agent Skills contribution)
 
-遇到以下借口时，直接拒绝并继续 TDD：
+When the following excuses appear, reject immediately and continue TDD:
 
-| 借口 | 回应 |
-|------|------|
-| "这个逻辑太简单了，不需要测试" | 简单的逻辑恰好最容易出 bug，先写测试 |
-| "我先把功能做出来再补测试" | 补测试从来不会发生，现在写 |
-| "这个改动我在脑子里测试过了" | 脑测无法检测未来的回归，先写测试 |
-| "时间紧，测试后面再说" | 没有测试的代码是技术债，先写测试 |
-| "这只是临时代码" | 临时代码变成永久代码的概率很高，先写测试 |
-| "测试这个太难写了" | 测试难写说明设计有问题，先修改设计再写测试 |
+| Excuse | Response |
+|--------|----------|
+| "This logic is too simple to need a test" | Simple logic is exactly where bugs hide most easily — write the test first |
+| "I'll implement the feature first and add tests later" | Tests added later never happen — write them now |
+| "I tested this in my head" | Mental tests cannot catch future regressions — write the test first |
+| "We're short on time, tests can wait" | Code without tests is technical debt — write the test first |
+| "This is just temporary code" | Temporary code has a high probability of becoming permanent — write the test first |
+| "This is too hard to test" | Hard-to-test code means the design has a problem — fix the design first, then write the test |
 
-## 执行步骤
+## Execution Steps
 
-### Step 1: 确认任务边界
+### Step 1: Confirm Task Boundary
 
-从 `.superman/phases/execute/progress.md` 读取当前任务，明确：
-- 要实现什么功能（输入 / 输出 / 行为）
-- 测试文件路径
-- 实现文件路径
+Read the current task from `.superman/phases/execute/progress.md` and clarify:
+- What functionality to implement (input / output / behavior)
+- Test file path
+- Implementation file path
 
-### Step 2: 写失败测试
+### Step 2: Write the Failing Test
 
-根据任务要求写最小化测试：
-- 只测试当前任务的行为，不测试未实现的功能
-- 测试名称描述期望行为（如 `test_returns_error_when_input_empty`）
-- 运行测试，确认 **RED**（失败）
+Write the minimal test for the task requirements:
+- Test only the behavior of the current task, not unimplemented functionality
+- Test names describe the expected behavior (e.g., `test_returns_error_when_input_empty`)
+- Run the test, confirm **RED** (failing)
 
-若测试意外通过 → 检查测试本身是否正确（可能测试逻辑有误）。
+If the test unexpectedly passes → check whether the test itself is correct (the test logic may be wrong).
 
-### Step 3: 写最小实现
+### Step 3: Write Minimal Implementation
 
-写能让测试通过的最小代码：
-- 不写超出测试覆盖范围的代码
-- 不提前优化
-- 运行测试，确认 **GREEN**（通过）
+Write the minimal code to make the test pass:
+- Do not write code beyond what the test covers
+- Do not optimize prematurely
+- Run the test, confirm **GREEN** (passing)
 
-### Step 4: 重构（可选）
+### Step 4: Refactor (optional)
 
-若实现有明显重复或难以理解的代码：
-- 重构，保持测试通过
-- 不添加新功能
+If the implementation has obvious duplication or hard-to-understand code:
+- Refactor while keeping the test passing
+- Do not add new functionality
 
-### Step 5: 提交
+### Step 5: Commit
 
 ```
 git add {test_file} {impl_file}
-git commit -m "feat: {具体描述本次实现的行为}"
+git commit -m "feat: {specific description of the behavior implemented}"
 ```
 
-### Step 6: 更新进度
+### Step 6: Update Progress
 
-将 `.superman/phases/execute/progress.md` 中当前任务标记为 `[x]`，继续下一个任务。
+Mark the current task as `[x]` in `.superman/phases/execute/progress.md` and continue to the next task.
 
-## 任务跟踪格式
+## Task Tracking Format
 
-`.superman/phases/execute/progress.md` 维护如下：
+`.superman/phases/execute/progress.md` is maintained as follows:
 
 ```
-## 执行进度
+## Execution Progress
 
-- [x] Task 1: 描述
-- [ ] Task 2: 描述（进行中）
-- [ ] Task 3: 描述
+- [x] Task 1: description
+- [ ] Task 2: description (in progress)
+- [ ] Task 3: description
 ```

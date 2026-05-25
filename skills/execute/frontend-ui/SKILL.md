@@ -1,27 +1,27 @@
 # superman:frontend-ui
 
-**Goal**: 在前端 UI 开发中遵循工程纪律，确保组件可测试、可访问、性能可预期，避免常见前端陷阱。
+**Goal**: Follow engineering discipline in frontend UI development to ensure components are testable, accessible, and have predictable performance, avoiding common frontend pitfalls.
 
-**Trigger**: EXECUTE 阶段涉及前端组件实现、样式修改、交互逻辑时调用。
+**Trigger**: Invoke during the EXECUTE phase when implementing frontend components, modifying styles, or writing interaction logic.
 
 ---
 
-## 组件设计原则
+## Component Design Principles
 
-### 单一职责
+### Single Responsibility
 
-每个组件只做一件事：
+Each component does one thing:
 
-- ✅ `UserAvatar` — 显示头像
-- ✅ `UserCard` — 组合 Avatar + 用户名 + 状态
-- ❌ `UserDashboard` — 包含头像 + 设置 + 权限 + 通知（太多）
+- ✅ `UserAvatar` — displays an avatar
+- ✅ `UserCard` — composes Avatar + username + status
+- ❌ `UserDashboard` — includes avatar + settings + permissions + notifications (too much)
 
-### Props 设计
+### Props Design
 
-定义明确的 props interface，避免 `any` 或 `object` 类型：
+Define explicit props interfaces; avoid `any` or `object` types:
 
 ```typescript
-// ✅ 明确的 props interface
+// ✅ explicit props interface
 interface ButtonProps {
   label: string;
   variant: 'primary' | 'secondary' | 'danger';
@@ -30,37 +30,37 @@ interface ButtonProps {
 }
 ```
 
-### 状态管理
+### State Management
 
-- **本地状态**（UI 交互、临时值）→ `useState` / 组件内 state
-- **共享状态**（多组件需要）→ Context / Store
-- **服务端数据**（API 响应）→ React Query / SWR（自动缓存和重验证）
+- **Local state** (UI interaction, temporary values) → `useState` / component state
+- **Shared state** (needed by multiple components) → Context / Store
+- **Server data** (API responses) → React Query / SWR (automatic caching and revalidation)
 
-禁止将服务端数据和 UI 状态混在同一个全局 store。
+Do not mix server data and UI state in the same global store.
 
-## 可访问性（Accessibility）
+## Accessibility
 
-每个交互元素必须：
+Every interactive element must:
 
-- [ ] `button` 有 `aria-label`（若无文本）
-- [ ] 图片有 `alt` 属性（装饰图用 `alt=""`）
-- [ ] 表单 `input` 关联 `label`（`htmlFor` / `aria-labelledby`）
-- [ ] 键盘可导航（Tab 顺序逻辑，Enter/Space 触发按钮）
-- [ ] 颜色对比度 ≥ 4.5:1（WCAG AA）
+- [ ] `button` has `aria-label` (if there is no text)
+- [ ] Images have `alt` attribute (decorative images use `alt=""`)
+- [ ] Form `input` is associated with a `label` (`htmlFor` / `aria-labelledby`)
+- [ ] Keyboard navigable (logical Tab order, Enter/Space triggers buttons)
+- [ ] Color contrast ≥ 4.5:1 (WCAG AA)
 
-## 性能规则
+## Performance Rules
 
-- 不在 render 中计算重型数据 → 使用 `useMemo` 或预计算
-- 列表使用虚拟化 → 超过 50 项使用 `react-window` 或类似库
-- 图片懒加载 → `loading="lazy"` 或 Intersection Observer
-- 避免不必要的 re-render → 合理使用 `React.memo`，父组件拆分
+- Do not compute heavy data in render → use `useMemo` or precompute
+- Virtualize lists → use `react-window` or similar for more than 50 items
+- Lazy-load images → `loading="lazy"` or Intersection Observer
+- Avoid unnecessary re-renders → use `React.memo` judiciously, split parent components
 
-## 测试策略
+## Testing Strategy
 
-测试行为，不测试实现细节：
+Test behavior, not implementation details:
 
 ```typescript
-// ✅ 测试可见行为
+// ✅ test visible behavior
 test('shows error message when email is invalid', async () => {
   render(<LoginForm />);
   await userEvent.type(screen.getByLabelText('Email'), 'not-an-email');
@@ -69,16 +69,16 @@ test('shows error message when email is invalid', async () => {
 });
 ```
 
-## 使用 Chrome DevTools MCP 验证
+## Verifying with Chrome DevTools MCP
 
-前端实现完成后，用 Chrome DevTools MCP 验证：
+After frontend implementation is complete, verify with Chrome DevTools MCP:
 
-1. `navigate_page` → 加载目标页面
-2. `take_snapshot` → 确认 DOM 结构正确
-3. `list_console_messages` → 确认无 JS 错误
-4. `take_screenshot` → 视觉确认布局
-5. `evaluate_script` → 验证关键 DOM 属性（aria, data-testid）
+1. `navigate_page` → load the target page
+2. `take_snapshot` → confirm DOM structure is correct
+3. `list_console_messages` → confirm no JS errors
+4. `take_screenshot` → visually confirm layout
+5. `evaluate_script` → verify key DOM attributes (aria, data-testid)
 
-## 与 superman:verification 的关系
+## Relationship with superman:verification
 
-`superman:verification` 负责在真实浏览器中观察实际行为，本技能负责实现时的工程纪律。两者互补。
+`superman:verification` observes actual behavior in a real browser; this skill governs engineering discipline during implementation. They complement each other.

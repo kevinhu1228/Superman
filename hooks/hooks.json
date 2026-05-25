@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'if [ -f .superman/context/size-classification.md ]; then level=$(grep -o \"综合等级：[SML]\" .superman/context/size-classification.md | head -1 | cut -d\"：\" -f2); [ \"$level\" = \"L\" ] && echo \"[Superman] L-level requirement active — CI gates will be enforced at VERIFY phase\"; fi'"
+            "command": "bash -c 'if [ -f .superman/context/size-classification.md ]; then level=$(grep -o \"Overall Level: [SML]\" .superman/context/size-classification.md | head -1 | grep -o \"[SML]$\"); [ \"$level\" = \"L\" ] && echo \"[Superman] L-level requirement active — CI gates will be enforced at VERIFY phase\"; fi'"
           }
         ]
       }

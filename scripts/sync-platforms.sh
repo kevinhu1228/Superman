@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sync-platforms.sh — 将 Superman 平台配置同步到目标项目
+# sync-platforms.sh — sync Superman platform configs to target project
 # Usage: bash scripts/sync-platforms.sh [target-dir]
 
 set -e
@@ -67,7 +67,7 @@ if ! python3 -c "import sys; sys.exit(0 if sys.version_info >= (3, 6) else 1)" 2
   exit 1
 fi
 
-# 将 plugin.json 的 skill 路径改写为绝对路径后写入目标位置
+# Rewrite skill paths in plugin.json to absolute paths and install to target
 install_plugin_json() {
   local src="$1"
   local dst="$2"
@@ -101,7 +101,7 @@ with open(dst, "w") as f:
 PYEOF
 }
 
-# 将 superman.js 的 SUPERMAN_ROOT 改写为安装时的绝对路径后写入目标位置
+# Inject absolute SUPERMAN_ROOT into superman.js and install to target
 install_opencode_js() {
   local src="$1"
   local dst="$2"
@@ -123,7 +123,7 @@ with open(dst, 'w') as f:
 PYEOF
 }
 
-# 将 gates-default.json 的 node scripts/ 命令改写为绝对路径后写入目标位置
+# Rewrite node scripts/ commands in gates-default.json to absolute paths and install to target
 install_gates_json() {
   local src="$1"
   local dst="$2"

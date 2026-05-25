@@ -1,59 +1,59 @@
 # superman:incremental-impl
 
-**Goal**: 通过强制增量实现策略，防止大块不可追溯的代码变更，确保每次提交都是可理解、可回滚的最小单元。
+**Goal**: Prevent large untraceable code changes by enforcing an incremental implementation strategy, ensuring every commit is the smallest understandable and revertible unit.
 
-**Trigger**: EXECUTE 阶段每个任务实现时自动遵守。作为 superman:tdd 和 superman:subagent-dev 的辅助纪律层。
+**Trigger**: Automatically followed during each task implementation in the EXECUTE phase. Acts as a discipline layer on top of superman:tdd and superman:subagent-dev.
 
 ---
 
-## 核心规则
+## Core Rules
 
-**每次提交不超过以下任一阈值：**
-- 单个功能点（一个函数、一个接口、一个配置项）
-- 时间跨度：不超过 30 分钟的工作量
-- 代码行数：新增/修改不超过 100 行（纯机械代码除外）
+**No single commit should exceed any of the following thresholds:**
+- One feature unit (one function, one interface, one config entry)
+- Time span: no more than 30 minutes of work
+- Lines of code: no more than 100 lines added/modified (excluding purely mechanical code)
 
-超出阈值 → 拆分为更小的步骤。
+Exceeding any threshold → split into smaller steps.
 
-## 实现顺序
+## Implementation Order
 
-**总是从内向外实现：**
+**Always implement from the inside out:**
 
-1. 核心数据结构 / 类型定义
-2. 纯函数 / 工具函数（无副作用）
-3. 核心业务逻辑
-4. 副作用层（I/O、网络、数据库）
-5. 接口层（API、UI、CLI）
-6. 集成测试
+1. Core data structures / type definitions
+2. Pure functions / utility functions (no side effects)
+3. Core business logic
+4. Side effect layer (I/O, network, database)
+5. Interface layer (API, UI, CLI)
+6. Integration tests
 
-**禁止跳过顺序：** 不在没有内层实现的情况下写接口层。
+**Order must not be skipped:** Do not write the interface layer without inner-layer implementations.
 
-## 增量提交规范
+## Incremental Commit Standards
 
-每个提交必须：
-1. 能独立编译（不依赖尚未提交的代码）
-2. 测试通过（使用 `superman:tdd` 门控）
-3. 描述清楚（提交信息说明做了什么，为什么）
+Each commit must:
+1. Compile independently (not depend on uncommitted code)
+2. Pass tests (gated by `superman:tdd`)
+3. Have a clear description (commit message explains what and why)
 
-好的增量提交示例：
+Good incremental commit examples:
 - `feat: add User.validate() method with email format check`
 - `feat: add POST /users endpoint using User.validate()`
 
-错误的大块提交示例：
+Bad large-batch commit example:
 - `feat: add complete user management system`
 
-## 大任务拆解方法
+## Large Task Decomposition Method
 
-若任务看起来太大，使用此拆解策略：
+If a task looks too large, use this decomposition strategy:
 
-1. **列出所有需要的数据结构** → 每个数据结构是一个提交
-2. **列出所有接口/函数签名** → 每个函数是一个提交（先写 stub）
-3. **逐个实现函数** → 配合 TDD，每个函数通过测试后提交
-4. **集成** → 连接各函数，提交集成代码
+1. **List all required data structures** → each data structure is one commit
+2. **List all interface/function signatures** → each function is one commit (write stubs first)
+3. **Implement functions one by one** → paired with TDD, commit after each function passes its test
+4. **Integration** → connect functions, commit integration code
 
-## 何时允许大提交
+## When Large Commits Are Allowed
 
-以下情况允许超出 100 行：
-- 自动生成代码（如 schema 迁移、protobuf 生成）
-- 纯格式化（`prettier`、`gofmt` 等）
-- 复制现有模式的样板代码（需在提交信息中说明）
+The following cases may exceed 100 lines:
+- Auto-generated code (e.g., schema migrations, protobuf generation)
+- Pure formatting (`prettier`, `gofmt`, etc.)
+- Boilerplate that copies an existing pattern (state this in the commit message)

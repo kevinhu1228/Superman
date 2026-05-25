@@ -1,26 +1,26 @@
 # superman:ci-gates
 
-**Goal**: 读取 `.superman/ci/gates.json`，执行所有配置的 CI 门控检查，确保 L 级需求在合并前通过所有自动化验证。
+**Goal**: Read `.superman/ci/gates.json`, execute all configured CI gate checks, and ensure L-level requirements pass all automated validations before merging.
 
-**Trigger**: VERIFY 阶段，L 级需求在 `superman:spec-satisfied` 之后调用。M 级和 S 级跳过此技能。
+**Trigger**: VERIFY phase; invoke after `superman:spec-satisfied` for L-level requirements. Skip for M and S levels.
 
 ---
 
-## 执行流程
+## Execution Flow
 
-### Step 1: 读取 gates 配置
+### Step 1: Read Gates Configuration
 
 ```bash
 cat .superman/ci/gates.json
 ```
 
-若文件不存在：
-- L 级：报错停止，提示用户配置 CI gates（参考项目根目录 `ci/gates-default.json`）
-- gates 为空数组：跳过并记录日志，继续下一步
+If the file does not exist:
+- L level: error and stop; prompt the user to configure CI gates (reference `ci/gates-default.json` in the project root)
+- Empty gates array: skip and log, continue to the next step
 
-### Step 2: 逐个执行 gate
+### Step 2: Execute Each Gate
 
-对每个 gate 对象（`{ id, name, command, expected_exit_code }`）执行：
+For each gate object (`{ id, name, command, expected_exit_code }`), execute:
 
 ```bash
 echo "Running gate: {gate.name}"
@@ -34,39 +34,39 @@ else
 fi
 ```
 
-### Step 3: 汇总结果
+### Step 3: Summarize Results
 
-将结果追加到 `.superman/phases/verify/review.md`：
+Append results to `.superman/phases/verify/review.md`:
 
 ```
-## CI Gates 结果
+## CI Gates Results
 
-**执行时间：** {ISO 时间戳}
-**需求等级：** L
+**Executed at:** {ISO timestamp}
+**Requirement level:** L
 
-| Gate ID | Gate Name | 结果 | 退出码 |
-|---------|-----------|------|--------|
+| Gate ID | Gate Name | Result | Exit Code |
+|---------|-----------|--------|-----------|
 | validate-skills | Validate all skill files | ✅ PASS | 0 |
 | spec-exists | Spec file must exist | ✅ PASS | 0 |
 
-**总计：** {N} 个 gate，✅ {P} 通过，❌ {F} 失败
+**Total:** {N} gates, ✅ {P} passed, ❌ {F} failed
 
-**结论：PASS / FAIL**
+**Conclusion: PASS / FAIL**
 ```
 
-### Step 4: 处理失败
+### Step 4: Handle Failures
 
-若任何 gate 失败：
-1. 显示 gate 的完整输出（用于诊断）
-2. 停止 VERIFY 阶段，不允许继续 git-ship
-3. 返回 EXECUTE 阶段修复失败的检查项
-4. 修复完成后重新执行 ci-gates
+If any gate fails:
+1. Show the gate's full output (for diagnosis)
+2. Stop the VERIFY phase; do not proceed to git-ship
+3. Return to the EXECUTE phase to fix the failing check
+4. Re-run ci-gates after the fix
 
-若全部通过：继续 `superman:git-ship`
+If all pass: continue to `superman:git-ship`
 
-## 添加自定义 Gate
+## Adding Custom Gates
 
-在 `.superman/ci/gates.json` 中添加项目特定的检查：
+Add project-specific checks to `.superman/ci/gates.json`:
 
 ```json
 {
@@ -91,6 +91,6 @@ fi
 }
 ```
 
-## 与 superman:production-ready 的关系
+## Relationship with superman:production-ready
 
-`superman:production-ready` 是手动检查清单，`superman:ci-gates` 是自动化门控。可自动化的生产就绪检查项（如 `npm audit`、测试、类型检查）应同时配置为 ci-gates，实现双重保障。
+`superman:production-ready` is a manual checklist; `superman:ci-gates` is automated enforcement. Automatable production readiness checks (e.g., `npm audit`, tests, type checking) should be configured as ci-gates to provide double assurance.

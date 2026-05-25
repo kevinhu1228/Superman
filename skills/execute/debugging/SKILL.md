@@ -1,88 +1,88 @@
 # superman:debugging
 
-**Goal**: 通过系统化 5 步调试流程 + 错误恢复模式，避免随机猜测，快速定位并解决 bug。
+**Goal**: Locate and resolve bugs quickly through a systematic 5-step debugging process and error recovery patterns, avoiding random guessing.
 
-**Trigger**: 遇到测试失败、代码报错、行为异常，或用户明确要求调试时触发。
+**Trigger**: Triggered when tests fail, code errors, behavior is unexpected, or the user explicitly requests debugging.
 
 ---
 
-## 5 步调试流程（Superpowers 主干）
+## 5-Step Debugging Process (Superpowers core)
 
-### Step 1: 复现
+### Step 1: Reproduce
 
-**先能稳定复现，才能调试。**
+**Achieve stable reproduction before debugging.**
 
-- 找到最小复现步骤：能触发 bug 的最少操作
-- 若无法复现 → 记录条件，等待下次出现
-- 确认复现成功后再继续
+- Find the minimum reproduction steps: the fewest operations that trigger the bug
+- If unable to reproduce → record the conditions and wait for the next occurrence
+- Confirm reproduction succeeds before continuing
 
-### Step 2: 隔离
+### Step 2: Isolate
 
-**缩小问题范围到最小可能的代码单元。**
+**Narrow the problem to the smallest possible code unit.**
 
-- 二分法：注释掉一半代码，确认 bug 在哪半
-- 逐步缩小范围：系统级 → 模块级 → 函数级 → 行级
-- 使用 `git bisect` 定位引入 bug 的提交（有 git 历史时）
+- Binary search: comment out half the code, confirm which half contains the bug
+- Gradually narrow scope: system level → module level → function level → line level
+- Use `git bisect` to locate the commit that introduced the bug (when git history is available)
 
-### Step 3: 形成假设
+### Step 3: Form a Hypothesis
 
-**在查看代码前，写下你认为的根因。**
-
-```
-假设：{我认为是 X 导致了 Y，因为 Z}
-验证方法：{在 L 行添加 log/断点，检查变量 V 的值}
-```
-
-不允许没有假设就开始随机修改代码。
-
-### Step 4: 验证假设
-
-- 添加 log / 断点 / 临时 print 验证假设
-- 若假设正确 → 进入 Step 5
-- 若假设错误 → 返回 Step 3，形成新假设
-
-**Hypothesis tracking（假设跟踪）：**
+**Write down what you believe the root cause is before looking at code.**
 
 ```
-[假设 1] X 导致 Y — 已验证：❌ 错误（Z 变量值为 0 而非 null）
-[假设 2] A 导致 B — 已验证：✅ 正确
+Hypothesis: {I think X caused Y because Z}
+Verification method: {add a log/breakpoint at line L, check the value of variable V}
 ```
 
-### Step 5: 修复并验证
+Do not start randomly modifying code without a hypothesis.
 
-- 修复最小范围（不扩大改动）
-- 运行测试，确认 bug 消失且无回归
-- 删除所有临时 log / print
-- 提交修复
+### Step 4: Verify the Hypothesis
 
-## 错误恢复模式（Agent Skills 贡献）
+- Add logs / breakpoints / temporary prints to verify the hypothesis
+- If the hypothesis is correct → proceed to Step 5
+- If the hypothesis is wrong → return to Step 3, form a new hypothesis
 
-根据错误类型选择恢复策略：
-
-| 错误类型 | 恢复策略 |
-|---------|---------|
-| 测试失败（期望 vs 实际不匹配） | 检查测试本身是否正确；检查实现是否符合规格 |
-| 运行时崩溃 / 异常 | 读完整 stack trace，从最内层 frame 开始 |
-| 性能问题 | Profile first，找 hot path，不盲目优化 |
-| 状态不一致 | 找状态的唯一写入点，检查写入顺序 |
-| 第三方库报错 | 先读文档，再看 GitHub Issues，最后才改代码 |
-| CI 失败但本地通过 | 检查环境差异（env vars、版本、文件路径大小写） |
-
-## Browser DevTools 集成（Agent Skills 贡献）
-
-前端 bug 调试时使用 Chrome DevTools MCP：
+**Hypothesis tracking:**
 
 ```
-1. navigate_page → 打开目标页面
-2. take_snapshot → 确认 DOM 状态
-3. list_console_messages → 检查 JS 错误
-4. list_network_requests → 检查 API 调用
-5. evaluate_script → 在页面上下文中执行验证代码
+[Hypothesis 1] X causes Y — verified: ❌ wrong (variable Z was 0, not null)
+[Hypothesis 2] A causes B — verified: ✅ correct
 ```
 
-## 何时停止调试（Escalation）
+### Step 5: Fix and Verify
 
-若 45 分钟内无进展：
-1. 写下已知信息和已排除的假设
-2. 请人 / AI review 当前 hypothesis log
-3. 考虑临时绕过并记录 issue（不要无限挖洞）
+- Fix the minimum scope (do not expand the change)
+- Run tests, confirm the bug is gone and there are no regressions
+- Remove all temporary logs / prints
+- Commit the fix
+
+## Error Recovery Patterns (Agent Skills contribution)
+
+Choose a recovery strategy based on error type:
+
+| Error Type | Recovery Strategy |
+|------------|------------------|
+| Test failure (expected vs. actual mismatch) | Check whether the test itself is correct; check whether the implementation matches the spec |
+| Runtime crash / exception | Read the full stack trace; start from the innermost frame |
+| Performance issue | Profile first, find the hot path, do not optimize blindly |
+| State inconsistency | Find the single write point for the state, check write order |
+| Third-party library error | Read the docs first, then GitHub Issues, only then change code |
+| CI fails but passes locally | Check environment differences (env vars, versions, file path casing) |
+
+## Browser DevTools Integration (Agent Skills contribution)
+
+When debugging frontend bugs, use Chrome DevTools MCP:
+
+```
+1. navigate_page → open the target page
+2. take_snapshot → confirm DOM state
+3. list_console_messages → check JS errors
+4. list_network_requests → check API calls
+5. evaluate_script → run validation code in page context
+```
+
+## When to Stop Debugging (Escalation)
+
+If no progress after 45 minutes:
+1. Write down what is known and what hypotheses have been ruled out
+2. Ask a person / AI to review the current hypothesis log
+3. Consider a temporary workaround and file an issue (do not dig indefinitely)

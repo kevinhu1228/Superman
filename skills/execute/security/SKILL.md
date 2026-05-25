@@ -1,64 +1,64 @@
 # superman:security
 
-**Goal**: 在 EXECUTE 阶段对每个实现步骤进行安全检查，防止引入常见安全漏洞，确保代码在发布前满足基本安全要求。
+**Goal**: Perform a security self-check for each implementation step in the EXECUTE phase to prevent common vulnerabilities and ensure code meets baseline security requirements before release.
 
-**Trigger**: EXECUTE 阶段每次完成一个任务时，在提交前执行安全自检。L/M 级均执行。
+**Trigger**: After each task completes in the EXECUTE phase, run the security self-check before committing. Applies to both L and M levels.
 
 ---
 
-## 安全自检清单
+## Security Self-Check Checklist
 
-完成每个任务后，对以下项目执行检查：
+After completing each task, check the following items:
 
-### 1. 输入验证
+### 1. Input Validation
 
-- [ ] 所有用户输入（表单、URL 参数、API 请求体）在使用前已验证
-- [ ] 文件路径操作使用白名单而非黑名单
-- [ ] 数字类型检查（整数溢出、负数、NaN）
-- [ ] 字符串长度限制（防止拒绝服务）
+- [ ] All user input (forms, URL parameters, API request bodies) is validated before use
+- [ ] File path operations use allowlists rather than blocklists
+- [ ] Numeric type checks (integer overflow, negative numbers, NaN)
+- [ ] String length limits (to prevent denial of service)
 
-### 2. 注入防护
+### 2. Injection Prevention
 
-- [ ] SQL 查询使用参数化查询，不拼接字符串
-- [ ] Shell 命令使用参数数组，不拼接字符串
-- [ ] 模板渲染对用户数据进行转义
-- [ ] XML/JSON 解析时防止实体注入
+- [ ] SQL queries use parameterized queries, not string concatenation
+- [ ] Shell commands use argument arrays, not string concatenation
+- [ ] Template rendering escapes user data
+- [ ] XML/JSON parsing protects against entity injection
 
-### 3. 认证与授权
+### 3. Authentication and Authorization
 
-- [ ] 每个 API 端点都有明确的权限检查
-- [ ] 敏感操作有二次确认（如删除、付款）
-- [ ] 会话 token 有过期时间
-- [ ] 密码使用强哈希（bcrypt/argon2），不存明文
+- [ ] Every API endpoint has an explicit permission check
+- [ ] Sensitive operations require a second confirmation (e.g., delete, payment)
+- [ ] Session tokens have an expiry time
+- [ ] Passwords use strong hashing (bcrypt/argon2), never stored in plaintext
 
-### 4. 数据保护
+### 4. Data Protection
 
-- [ ] 密钥和凭据不在代码中硬编码，使用环境变量
-- [ ] 敏感数据不写入日志
-- [ ] HTTPS 传输敏感数据
-- [ ] 数据库中的敏感字段加密存储
+- [ ] Keys and credentials are not hardcoded; use environment variables
+- [ ] Sensitive data is not written to logs
+- [ ] Sensitive data is transmitted over HTTPS
+- [ ] Sensitive fields in the database are encrypted at rest
 
-### 5. 依赖安全
+### 5. Dependency Security
 
-- [ ] 新增依赖来源可信（官方 npm / PyPI / Maven）
-- [ ] 无已知高危漏洞的依赖版本
+- [ ] New dependencies come from trusted sources (official npm / PyPI / Maven)
+- [ ] No dependency versions with known critical vulnerabilities
 
-### 6. 错误处理
+### 6. Error Handling
 
-- [ ] 错误信息不暴露内部实现细节（stack trace、路径、版本）
-- [ ] 预期错误返回用户友好信息，内部错误记录日志
+- [ ] Error messages do not expose internal implementation details (stack traces, paths, versions)
+- [ ] Expected errors return user-friendly messages; internal errors are logged
 
-## 发现安全问题时
+## When a Security Issue Is Found
 
-1. **不跳过**：安全问题不允许用 TODO 标记留到后面
-2. 评估严重级别：
-   - **Critical**（注入、认证绕过）→ 立即修复，不提交存在此问题的代码
-   - **High**（权限缺失、敏感数据泄露）→ 当前任务修复
-   - **Medium/Low**（最佳实践缺失）→ 当前任务修复或创建跟踪 issue
+1. **Do not skip**: Security issues must not be marked TODO and deferred
+2. Assess severity:
+   - **Critical** (injection, authentication bypass) → fix immediately; do not commit code with this issue
+   - **High** (missing permissions, sensitive data leak) → fix in the current task
+   - **Medium/Low** (best practice violations) → fix in the current task or create a tracking issue
 
-## 与 superman:ci-gates 的关系
+## Relationship with superman:ci-gates
 
-可自动化的安全检查（如 `npm audit`）应配置为 ci-gates 的 gate 项：
+Automatable security checks (e.g., `npm audit`) should be configured as ci-gates gate items:
 
 ```json
 {

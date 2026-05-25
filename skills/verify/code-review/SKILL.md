@@ -1,87 +1,87 @@
 # superman:code-review
 
-**Goal**: 通过双向 code review 协议（请求方 + 接收方）配合结构化检查清单，确保代码在合并前达到正确性、安全性和可维护性标准。
+**Goal**: Ensure code meets correctness, security, and maintainability standards before merging through a two-way code review protocol (requester + reviewer) combined with a structured checklist.
 
-**Trigger**: EXECUTE 阶段每个任务完成后（在 subagent-dev 的两级审查中）以及 VERIFY 阶段开始时触发。
+**Trigger**: After each task completes in the EXECUTE phase (in the two-stage review within subagent-dev) and at the start of the VERIFY phase.
 
 ---
 
-## 双向协议（Superpowers 贡献）
+## Two-Way Protocol (Superpowers contribution)
 
-### 请求方（实现者）职责
+### Requester (implementer) responsibilities
 
-提交 review 时必须提供：
+When submitting for review, must provide:
 
-1. **变更摘要**：这个 PR/commit 做了什么（1-3 句话）
-2. **测试情况**：已运行哪些测试，结果如何
-3. **关注点**：希望 reviewer 重点看哪里
-4. **不在范围内**：明确说明此次不解决什么
+1. **Change summary**: What does this PR/commit do (1–3 sentences)
+2. **Test status**: Which tests were run and what were the results
+3. **Focus areas**: Where the reviewer should pay special attention
+4. **Out of scope**: Explicitly state what is not addressed in this change
 
-请求方模板：
+Requester template:
 
 ```
 ## Code Review Request
 
-**变更**：为 User 模型添加邮件验证逻辑，含正则和 MX 记录检查
-**测试**：unit tests 5/5 通过；集成测试覆盖正常路径和三种错误路径
-**关注点**：MX 记录查询的超时处理，不确定 5 秒是否合适
-**范围外**：手机号验证将在下一个 PR 中处理
+**Change**: Add email validation logic to the User model with regex and MX record check
+**Tests**: unit tests 5/5 passing; integration tests cover the happy path and three error paths
+**Focus**: Timeout handling for the MX record query — not sure if 5 seconds is appropriate
+**Out of scope**: Phone number validation will be handled in the next PR
 ```
 
-### 接收方（审查者）职责
+### Reviewer responsibilities
 
-按以下清单检查，每项明确标注 ✅/❌/⚠️：
+Check against the following checklist, marking each item ✅/❌/⚠️:
 
-#### 正确性
+#### Correctness
 
-- [ ] 逻辑是否实现了规格要求（对照 spec.md 逐条验证）
-- [ ] 边界条件处理是否完整（空值、零值、最大值、并发）
-- [ ] 错误路径是否有测试覆盖
-- [ ] 异步代码的错误处理（未处理的 Promise rejection）
+- [ ] Does the logic implement the spec requirements (verify against spec.md line by line)
+- [ ] Are boundary conditions handled completely (null, zero, max value, concurrency)
+- [ ] Are error paths covered by tests
+- [ ] Error handling in async code (unhandled Promise rejections)
 
-#### 安全（基础检查）
+#### Security (baseline checks)
 
-- [ ] 用户输入是否经过验证（参考 `superman:security`）
-- [ ] 无硬编码密钥或凭据
-- [ ] SQL/Shell/模板注入风险
+- [ ] Is user input validated (refer to `superman:security`)
+- [ ] No hardcoded keys or credentials
+- [ ] SQL/Shell/template injection risks
 
-#### 可维护性
+#### Maintainability
 
-- [ ] 函数命名是否描述行为
-- [ ] 单个函数不超过 50 行（超过考虑拆分）
-- [ ] 重复代码（DRY 原则，超过 3 次重复应提取）
-- [ ] 注释是否解释"为什么"（不是"是什么"）
+- [ ] Do function names describe behavior
+- [ ] Single functions do not exceed 50 lines (consider splitting if exceeded)
+- [ ] Duplicate code (DRY principle; extract if repeated more than 3 times)
+- [ ] Do comments explain "why" (not "what")
 
-#### 性能（仅当相关）
+#### Performance (only when relevant)
 
-- [ ] 是否在循环中做了不必要的 I/O / 计算
-- [ ] 大数据集是否有分页或流式处理
+- [ ] Are there unnecessary I/O or computations in loops
+- [ ] Are large data sets paginated or streamed
 
-## 反馈分级
+## Feedback Severity Levels
 
-| 级别 | 含义 | 是否阻塞合并 |
-|------|------|------------|
-| **Critical** | 正确性/安全问题，必须修复 | ✅ 阻塞 |
-| **Important** | 显著影响可维护性，强烈建议修复 | ✅ 阻塞 |
-| **Minor** | 代码风格/偏好，可选修复 | ❌ 不阻塞 |
-| **Note** | 观察和建议，供参考 | ❌ 不阻塞 |
+| Level | Meaning | Blocks merge |
+|-------|---------|-------------|
+| **Critical** | Correctness/security issue, must fix | ✅ Blocks |
+| **Important** | Significantly impacts maintainability, strongly recommended to fix | ✅ Blocks |
+| **Minor** | Code style / preference, optional fix | ❌ Does not block |
+| **Note** | Observation and suggestion, for reference | ❌ Does not block |
 
-## 反馈格式
+## Feedback Format
 
 ```
-[Critical] UserService.validate(): 正则表达式未转义点号，
-  `user@company.com` 会匹配 `user@companyXcom`
-  建议：将 `.` 改为 `\.`，并添加测试用例验证
+[Critical] UserService.validate(): regex does not escape the dot,
+  `user@company.com` would match `user@companyXcom`
+  Suggestion: change `.` to `\.` and add a test case to verify
 
-[Minor] 变量名 `d` → 建议改为 `userData`，更具可读性
+[Minor] Variable name `d` → suggest renaming to `userData` for readability
 ```
 
-## Review 结束条件
+## Review Completion Criteria
 
-- 所有 Critical 和 Important 问题已修复
-- 修复已重新提交，reviewer 已验证
-- Reviewer 明确宣告 ✅ APPROVED
+- All Critical and Important issues have been fixed
+- Fixes have been re-committed and the reviewer has verified them
+- Reviewer explicitly declares ✅ APPROVED
 
-## 与 superman:subagent-dev 的关系
+## Relationship with superman:subagent-dev
 
-`superman:subagent-dev` 在每个任务后自动派发 code reviewer subagent，使用本技能的清单进行审查。最终合并前还有一次全局 code review。
+`superman:subagent-dev` automatically dispatches a code reviewer subagent after each task using this skill's checklist. There is one final global code review before the last merge.

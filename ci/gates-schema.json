@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Superman CI Gates",
-  "description": "L级需求必须通过的CI检查项",
+  "description": "CI checks that must pass for L-level requirements",
   "type": "object",
   "required": ["gates"],
   "properties": {

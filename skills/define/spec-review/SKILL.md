@@ -1,44 +1,44 @@
 # superman:spec-review
 
-**Goal**: 对 `.superman/phases/define/spec.md` 进行自检，确保无 TBD、无矛盾、无歧义，通过后才允许进入 EXECUTE 阶段。
+**Goal**: Self-review `.superman/phases/define/spec.md` to ensure no TBDs, no contradictions, and no ambiguities; only allow entry into the EXECUTE phase after passing.
 
-**Trigger**: `superman:propose` 生成 spec.md 后自动调用（L 级必须，M 级跳过）。
+**Trigger**: Automatically invoked after `superman:propose` generates spec.md (required for L level, skipped for M level).
 
 ---
 
-## 检查清单
+## Checklist
 
-按序执行，发现问题立即修复，不等用户：
+Execute in order; fix issues immediately without waiting for the user:
 
-### 1. TBD 扫描
+### 1. TBD Scan
 
-搜索 spec.md 中的 `TBD`、`TODO`、`待定`、`稍后`、`暂时`。
-- 发现：直接替换为具体内容或删除该条目
-- 发现无法确定的：标记为需要用户澄清，暂停并询问
+Search spec.md for `TBD`, `TODO`, `FIXME`, or any unresolved placeholder.
+- Found: replace with specific content or remove the item
+- Cannot determine: mark as needing user clarification, pause and ask
 
-### 2. 内部一致性检查
+### 2. Internal Consistency Check
 
-- 架构描述与功能描述是否一致？
-- 接口定义在多处出现时是否相同？
-- 依赖关系是否有循环或矛盾？
+- Is the architecture description consistent with the feature description?
+- When interface definitions appear in multiple places, are they the same?
+- Are there any circular dependencies or contradictions?
 
-### 3. 范围检查
+### 3. Scope Check
 
-- 是否聚焦？所有内容都属于本次变更范围？
-- 是否可以分解为更小的独立单元？
+- Is it focused? Does all content belong to the current change scope?
+- Can it be decomposed into smaller independent units?
 
-### 4. 歧义检查
+### 4. Ambiguity Check
 
-- 同一需求是否可以被两种不同方式实现？
-- 如有，选择一种并明确写入 spec.md
+- Can the same requirement be implemented in two different ways?
+- If so, choose one and write it explicitly into spec.md
 
-## 通过标准
+## Pass Criteria
 
-检查完成且无未解决问题 → 在 spec.md 末尾追加：
+All checks complete with no unresolved issues → append to the end of spec.md:
 
 ```
 ---
-*Spec Review: PASSED [{ISO 时间戳}]*
+*Spec Review: PASSED [{ISO timestamp}]*
 ```
 
-然后继续 `superman:writing-plans`。
+Then continue to `superman:writing-plans`.

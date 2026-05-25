@@ -1,46 +1,46 @@
 # superman:api-design
 
-**Goal**: 在设计和实现 API 接口时，遵循一致性、可预测性和向后兼容性原则，避免常见 API 设计错误。
+**Goal**: Follow principles of consistency, predictability, and backward compatibility when designing and implementing API interfaces to avoid common API design mistakes.
 
-**Trigger**: EXECUTE 阶段涉及 API 设计（新建端点、修改接口、设计 SDK）时调用。
+**Trigger**: Invoke during the EXECUTE phase when API design is involved (creating new endpoints, modifying interfaces, designing SDKs).
 
 ---
 
-## REST API 设计原则
+## REST API Design Principles
 
-### 资源命名
+### Resource Naming
 
-使用复数名词和连字符，过滤条件用查询参数：
+Use plural nouns and hyphens; use query parameters for filtering:
 
-- ✅ `/users/{id}/orders` — 复数名词，层级关系清晰
-- ✅ `/orders?status=pending` — 过滤用查询参数
-- ❌ `/getUser` — 动词命名
-- ❌ `/user_orders` — 下划线（REST 用连字符）
+- ✅ `/users/{id}/orders` — plural nouns, clear hierarchy
+- ✅ `/orders?status=pending` — filtering via query parameters
+- ❌ `/getUser` — verb naming
+- ❌ `/user_orders` — underscores (REST uses hyphens)
 
-### HTTP 方法语义
+### HTTP Method Semantics
 
-| 方法 | 用途 | 幂等性 |
-|------|------|--------|
-| GET | 读取，不修改状态 | ✅ 幂等 |
-| POST | 创建资源 | ❌ 非幂等 |
-| PUT | 全量替换（需提供完整资源） | ✅ 幂等 |
-| PATCH | 部分更新（只提供要改的字段） | ✅ 幂等 |
-| DELETE | 删除 | ✅ 幂等 |
+| Method | Purpose | Idempotent |
+|--------|---------|-----------|
+| GET | Read, does not modify state | ✅ Idempotent |
+| POST | Create resource | ❌ Not idempotent |
+| PUT | Full replacement (requires complete resource) | ✅ Idempotent |
+| PATCH | Partial update (only fields to change) | ✅ Idempotent |
+| DELETE | Delete | ✅ Idempotent |
 
-### 状态码
+### Status Codes
 
-- `200 OK` — 成功读取 / 更新
-- `201 Created` — 成功创建，含 Location header
-- `204 No Content` — 成功删除（无响应体）
-- `400 Bad Request` — 客户端输入错误（含错误详情）
-- `401 Unauthorized` — 未认证
-- `403 Forbidden` — 已认证但无权限
-- `404 Not Found` — 资源不存在
-- `409 Conflict` — 状态冲突（如重复创建）
-- `422 Unprocessable` — 语法正确但业务逻辑失败
-- `500 Internal` — 服务端错误（不暴露细节）
+- `200 OK` — successful read / update
+- `201 Created` — successful creation, includes Location header
+- `204 No Content` — successful delete (no response body)
+- `400 Bad Request` — client input error (include error details)
+- `401 Unauthorized` — not authenticated
+- `403 Forbidden` — authenticated but no permission
+- `404 Not Found` — resource does not exist
+- `409 Conflict` — state conflict (e.g., duplicate creation)
+- `422 Unprocessable` — syntactically correct but business logic fails
+- `500 Internal` — server error (do not expose details)
 
-### 错误响应格式（统一）
+### Error Response Format (unified)
 
 ```json
 {
@@ -52,29 +52,29 @@
 }
 ```
 
-## 向后兼容原则
+## Backward Compatibility Principles
 
-**添加是安全的，删除/修改是危险的：**
+**Adding is safe; removing or modifying is dangerous:**
 
-- ✅ 添加新的可选字段
-- ✅ 添加新的端点
-- ✅ 添加新的枚举值（需客户端容错）
-- ❌ 删除字段（改为 deprecated + 迁移文档）
-- ❌ 修改字段类型
-- ❌ 修改 URL 路径（改为重定向 + 保留旧路径）
+- ✅ Add new optional fields
+- ✅ Add new endpoints
+- ✅ Add new enum values (clients must handle gracefully)
+- ❌ Remove fields (mark as deprecated + provide migration docs instead)
+- ❌ Change field types
+- ❌ Change URL paths (use redirect + preserve old path instead)
 
-## 版本管理
+## Versioning
 
-推荐 URL 版本方式：`/v1/users`，或使用日期 header：`API-Version: 2024-01-01`。
+Recommended URL versioning: `/v1/users`, or use a date header: `API-Version: 2024-01-01`.
 
-## 接口文档
+## Interface Documentation
 
-每个新接口必须在实现前写接口文档（OpenAPI / 注释），包含：
-- 请求参数（类型、是否必填、示例）
-- 响应格式（成功和错误）
-- 认证要求
-- 速率限制（若有）
+Every new interface must have documentation written before implementation (OpenAPI / comments), including:
+- Request parameters (type, required/optional, example)
+- Response format (success and error)
+- Authentication requirements
+- Rate limits (if applicable)
 
-## 与 superman:spec-review 的关系
+## Relationship with superman:spec-review
 
-API 接口定义写在 spec.md 中，`superman:spec-review` 会检查接口定义是否有歧义或矛盾。API 实现必须与 spec.md 中的定义完全一致。
+API interface definitions are written in spec.md; `superman:spec-review` checks whether interface definitions are ambiguous or contradictory. API implementations must exactly match the definitions in spec.md.

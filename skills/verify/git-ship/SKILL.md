@@ -1,38 +1,38 @@
 # superman:git-ship
 
-**Goal**: 通过结构化分支决策流程 + 发布前核查清单，确保代码安全合并到主分支并正确发布。
+**Goal**: Ensure code is safely merged to the main branch and correctly released through a structured branch decision flow and a pre-release checklist.
 
-**Trigger**: VERIFY 阶段所有检查通过后（spec-satisfied ✅ + verification ✅ + code-review ✅ + production-ready ✅），作为最后一步调用。
+**Trigger**: After all VERIFY phase checks pass (spec-satisfied ✅ + verification ✅ + code-review ✅ + production-ready ✅), invoke as the final step.
 
 ---
 
-## 分支决策（Superpowers 贡献）
+## Branch Decision (Superpowers contribution)
 
-### 评估分支状态
+### Assess Branch Status
 
 ```bash
-git log main..HEAD --oneline    # 本分支领先主分支的 commit 数量
-git diff main..HEAD --stat      # 改动规模
-git log --oneline -5            # 最近的 commit 历史
+git log main..HEAD --oneline    # number of commits this branch is ahead of main
+git diff main..HEAD --stat      # change size
+git log --oneline -5            # recent commit history
 ```
 
-### 分支策略
+### Branch Strategy
 
-| 情况 | 策略 |
-|------|------|
-| 单个逻辑变更 | squash merge（保持主分支历史干净） |
-| 多个独立变更 | merge commit（保留分支结构） |
-| 工作在 worktree | 从 worktree 分支发起 PR |
-| 快速修复 | cherry-pick 到 main + tag |
+| Situation | Strategy |
+|-----------|---------|
+| Single logical change | squash merge (keeps main branch history clean) |
+| Multiple independent changes | merge commit (preserves branch structure) |
+| Working in a worktree | create PR from the worktree branch |
+| Quick fix | cherry-pick to main + tag |
 
-### PR 创建（有 GitHub 时）
+### PR Creation (when GitHub is available)
 
 ```bash
 gh pr create \
-  --title "feat: {变更描述}" \
+  --title "feat: {change description}" \
   --body "## Summary
-- {主要变更 1}
-- {主要变更 2}
+- {main change 1}
+- {main change 2}
 
 ## Test plan
 - [x] Unit tests passing
@@ -40,47 +40,47 @@ gh pr create \
 - [x] spec-satisfied check passed"
 ```
 
-## 发布前核查清单（Agent Skills 贡献）
+## Pre-Release Checklist (Agent Skills contribution)
 
-提交 PR / merge 前逐项确认：
+Confirm each item before submitting PR / merging:
 
-### 代码层面
+### Code Level
 
-- [ ] 所有测试通过（`npm test` / `pytest` / `go test`）
-- [ ] Linting 通过（无 error 级别告警）
-- [ ] 无 `console.log`、`debugger`、临时注释留在代码中
-- [ ] 无 `TODO: fix before merge` 类型的标记
+- [ ] All tests pass (`npm test` / `pytest` / `go test`)
+- [ ] Linting passes (no error-level warnings)
+- [ ] No `console.log`, `debugger`, or temporary comments left in code
+- [ ] No `TODO: fix before merge` type markers
 
-### 文档层面
+### Documentation Level
 
-- [ ] 若修改了公开 API → 更新 API 文档
-- [ ] 若新增了环境变量 → 更新 `.env.example`
-- [ ] 若修改了 schema → 确认 migration 已包含
+- [ ] If public API was modified → update API docs
+- [ ] If new environment variables were added → update `.env.example`
+- [ ] If schema was modified → confirm migration is included
 
-### 版本层面
+### Version Level
 
-- [ ] 版本号已更新（若需要）
-- [ ] CHANGELOG 已更新（若有）
-- [ ] 所有 CI checks 通过（GitHub Actions / CircleCI）
+- [ ] Version number updated (if required)
+- [ ] CHANGELOG updated (if applicable)
+- [ ] All CI checks pass (GitHub Actions / CircleCI)
 
-### 合并后
+### After Merge
 
-- [ ] 在 staging 验证合并后的代码
-- [ ] 监控错误率 30 分钟（若是生产发布）
-- [ ] 若是重大发布：通知相关团队
+- [ ] Verify merged code on staging
+- [ ] Monitor error rate for 30 minutes (if production release)
+- [ ] If major release: notify relevant teams
 
-## Smoke Test（合并后验证）
+## Smoke Test (post-merge verification)
 
 ```bash
-# 切回主分支
+# Switch back to main branch
 git checkout main
 git pull
 
-# 快速验证关键功能（2-3 个最重要的操作）
-curl http://localhost:3000/health   # API 健康检查
-# 或手动打开应用验证一个核心流程
+# Quickly verify key functionality (2–3 most important operations)
+curl http://localhost:3000/health   # API health check
+# or manually open the application and verify one core flow
 ```
 
-## 调用 superman:archive
+## Invoke superman:archive
 
-git-ship 完成后，调用 `superman:archive` 将此次变更的所有 .superman/ 产物归档。
+After git-ship completes, invoke `superman:archive` to archive all .superman/ artifacts from this change.

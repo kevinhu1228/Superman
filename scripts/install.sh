@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# superman init — 将 Superman 配置注入目标项目
+# superman init — inject Superman configuration into target project
 
 set -e
 
@@ -11,7 +11,7 @@ echo "  Source: $SUPERMAN_DIR"
 echo "  Target: $TARGET_DIR"
 echo ""
 
-# 创建 .superman/ 目录结构
+# Create .superman/ directory structure
 mkdir -p "$TARGET_DIR/.superman/context"
 mkdir -p "$TARGET_DIR/.superman/phases/define"
 mkdir -p "$TARGET_DIR/.superman/phases/execute"
@@ -21,7 +21,7 @@ mkdir -p "$TARGET_DIR/.superman/ci"
 echo "  ✓ Created .superman/ structure"
 echo ""
 
-# 安装各平台配置（委托给 sync-platforms.sh）
+# Install platform configs (delegated to sync-platforms.sh)
 bash "$SUPERMAN_DIR/scripts/sync-platforms.sh" "$TARGET_DIR"
 
 echo "Next steps:"

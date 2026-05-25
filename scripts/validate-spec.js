@@ -6,23 +6,19 @@ const path = require('path');
 
 const REQUIRED_SECTIONS = [
   {
-    patterns: ['## Goal', '**Goal**', '## 目标', '**目标**'],
+    patterns: ['## Goal', '**Goal**'],
     label: 'Goal',
   },
   {
     patterns: [
-      '## Requirements', '## 需求', '## Features', '## 功能',
-      '## Scope', '## 范围', '## What',
+      '## Requirements', '## Features',
+      '## Scope', '## What',
     ],
     label: 'Requirements/Scope',
   },
 ];
 
-// \b anchors don't work around CJK characters. Use negative lookahead so that
-// 待定/稍后补充 match when NOT followed by another CJK char (excludes compounds
-// like 待定义/稍后补充说明 while catching end-of-line, punctuation, and ASCII
-// contexts such as 待定TODO or v1待定release).
-const PLACEHOLDER_RE = /\bTBD\b|\bTODO\b|\bFIXME\b|【待定】|【TODO】|待定(?![一-鿿])|稍后补充(?![一-鿿])/i;
+const PLACEHOLDER_RE = /\bTBD\b|\bTODO\b|\bFIXME\b/i;
 
 const SPEC_REVIEW_PASSED_RE = /Spec Review: PASSED/;
 
