@@ -11,27 +11,31 @@
 Before performing any code review, you MUST ask the user to choose an execution rule. Present the following options and wait for the user's response:
 
 ```
-请选择 code-review 执行规则：
+Please select a code-review execution rule:
 
-1. 单次 review，确认后修复
-   发现缺陷后汇总，等待用户确认后再修复
+1. Single review, fix after confirmation
+   Summarize all findings and wait for user confirmation before fixing.
 
-2. 单次 review，自动修复
-   发现缺陷后汇总并自动执行修复
+2. Single review, auto-fix
+   Summarize all findings and apply fixes automatically.
 
-3. 无限次 review，确认后修复（直到缺陷为 0）
-   每次发现缺陷后等待用户确认再修复，修复完自动进入下一轮，直到缺陷为 0
+3. Unlimited reviews, fix after confirmation (until 0 defects)
+   After each review, wait for user confirmation before fixing; then start the
+   next round automatically. Stop when no defects remain.
 
-4. 无限次 review，自动修复（直到缺陷为 0）
-   每次发现缺陷后自动修复，修复完自动进入下一轮，直到缺陷为 0
+4. Unlimited reviews, auto-fix (until 0 defects)
+   After each review, apply fixes automatically; then start the next round
+   automatically. Stop when no defects remain.
 
-5. 指定 n 次 review，确认后修复
-   由用户指定轮数 n，每次发现缺陷后等待用户确认再修复，完成 n 轮后结束
+5. n rounds of review, fix after confirmation
+   User specifies n. After each review, wait for user confirmation before
+   fixing; then start the next round. Stop after n rounds.
 
-6. 指定 n 次 review，自动修复
-   由用户指定轮数 n，每次发现缺陷后自动修复，完成 n 轮后结束
+6. n rounds of review, auto-fix
+   User specifies n. After each review, apply fixes automatically; then start
+   the next round. Stop after n rounds.
 
-请输入规则编号（选择 5 或 6 时请同时告知 n 的值）：
+Enter the rule number (for rules 5 or 6, also specify the value of n):
 ```
 
 ### Rule Execution Logic
