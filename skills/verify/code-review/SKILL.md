@@ -42,7 +42,7 @@ Please select a code-review execution rule:
 Enter the rule number (for rules 3 or 4, also specify the value of n):
 ```
 
-**Input validation**: If the user enters an invalid rule number or non-numeric input, re-prompt once with an error message. For rules 3/4, if n is not provided, zero, or negative, re-prompt for a valid positive integer before proceeding.
+**Input validation**: If the user enters an invalid rule number or non-numeric input, re-prompt once with an error message; if still invalid after the re-prompt, default to Rule 1 and inform the user. For rules 3/4, if n is not provided, zero, or negative, re-prompt up to 2 times for a valid positive integer; if still invalid after 2 re-prompts, default to n=3 and inform the user.
 
 ### Rule Execution Logic
 
@@ -52,24 +52,43 @@ After the user selects a rule, follow the corresponding execution flow:
 |------|-------------|----------------|---------------|
 | 1 | Wait for user confirmation | No loop | After 1 review + fix verification pass |
 | 2 | Auto-fix immediately | No loop | After 1 review + fix verification pass |
-| 3 | Wait for user confirmation | Loop n times | After n rounds complete (see exit note) |
-| 4 | Auto-fix immediately | Loop n times | After n rounds complete (see exit note) |
+| 3 | Wait for user confirmation | Loop n times | After n rounds complete; see **Exit note (Rules 3/4)** in Loop behavior §3 |
+| 4 | Auto-fix immediately | Loop n times | After n rounds complete; see **Exit note (Rules 3/4)** in Loop behavior §3 |
 | 5 | Wait for user confirmation | Loop until 0 defects | 0 Critical/Important issues |
 | 6 | Auto-fix immediately | Loop until 0 defects | 0 Critical/Important issues |
 
-**"Fix after confirmation" (Rules 1, 3, 5)**: present ALL findings from the current round first, then wait for a single user confirmation (e.g., "proceed") to fix all findings as a batch. Do not prompt separately for each finding.
+**"Fix after confirmation" (Rules 1, 3, 5)**: present ALL findings from the current round first, then wait for a single user confirmation (e.g., "proceed") to fix all findings as a batch. Do not prompt separately for each finding. If the user declines or sends a non-confirmation response, interpret as follows:
+  - **"skip" or "skip fixes, continue"** (Rules 3 and 5 only — not applicable to Rule 1 which has no loop): skip the fix step for this round only and proceed to the next round (no fixes applied this round; the loop continues normally through step 3 exit conditions). For Rule 1, treat "skip" the same as "stop" — declare ⚠️ REVIEW PAUSED and stop.
+  - **"stop", "no", "cancel"** or any other non-confirmation:
+    - For Rule 3 on the final allowed round (round N = n): declare ⚠️ ROUND LIMIT REACHED — [N] unresolved issue(s) remain (user declined fixes on final round), and stop.
+    - Otherwise: declare ⚠️ REVIEW PAUSED — user declined fixes for this round; [N] unresolved issue(s) remain; no new changes applied this round (prior-round fixes, if any, remain in place), and stop.
 
-**Rules 1 and 2 — fix verification pass**: after fixes are applied, run one final check to confirm no Critical/Important issues remain. If new issues are introduced by the fixes, report them but do not start another round.
+**Rules 1 and 2 — fix verification pass**: if the initial review finds zero defects, declare ✅ APPROVED immediately and stop. Otherwise:
+- **Rule 1**: only if the user confirmed fixes — run one final check on the full branch diff from the base branch to confirm no Critical/Important issues remain. If the user declined, the REVIEW PAUSED state already applies; do not proceed to the final check.
+- **Rule 2**: fixes are applied automatically — always run the final check on the full branch diff from the base branch.
+- If the final check finds new issues introduced by the fixes: report them, declare ⚠️ FIX INTRODUCED NEW DEFECTS — manual review required before approval, and stop. For automated invocations (Rule 2), this is a FAILED review; the orchestrator must escalate to the user before retrying.
+- If the final check is clean: declare ✅ APPROVED and stop.
 
-**Loop behavior (Rules 3–6)**:
-1. Run the full code-review checklist (below) from scratch on the complete diff
-2. If defects found:
-   - Rule 3/5: Present findings → wait for single user confirmation → fix all as a batch → proceed to next round (return to step 1)
-   - Rule 4/6: Present findings → auto-fix all → proceed to next round (return to step 1)
-3. Exit conditions:
-   - If no defects found at the end of any round: declare ✅ APPROVED and stop
-   - If round limit reached (Rules 3/4) but defects still remain: declare ⚠️ ROUND LIMIT REACHED — [N] unresolved issue(s) remain; review ended per the user-specified round limit without full approval
-4. For Rule 3/4: track current round number; announce "Round X / N" at each iteration
+**Loop behavior (Rules 3–6)** — execute every step in order each iteration; steps marked [Rules X] apply only to those rules:
+
+- **[Rules 3/4] Step 0**: Announce "Round X / N" (X = current round, 1-indexed; N = user-specified limit)
+- **Step 1**: Run the full code-review checklist from scratch on the full branch diff from the base branch
+- **Step 2**: Apply fixes:
+  - No defects found: skip directly to Step 3
+  - Defects found + Rule 3/5, confirmed: fix all as a batch; mark any new Critical/Important defect introduced by a fix as **[Fix-Induced]** in the next round's report
+  - Defects found + Rule 3/5, "skip fixes, continue": skip fix step this round; no fixes applied
+  - Defects found + Rule 3/5, "stop/no/cancel": apply declination handling (see "Fix after confirmation" above) — declination handling declares a terminal state and stops; do not proceed to Steps 3–5
+  - Defects found + Rule 4/6: auto-fix all; **[Fix-Induced]** note applies
+- **Step 3 — Exit conditions** (**Exit note**):
+  - If no defects found → declare ✅ APPROVED and **STOP** (see APPROVED note below)
+  - **[Rules 3/4]** If round X = N (limit reached) and defects still remain → declare ⚠️ ROUND LIMIT REACHED — [N] unresolved issue(s) remain; review ended per user-specified limit (whether user confirmed, skipped, or declined fixes this round); **STOP**
+  - Otherwise → **[Rules 3/4]** proceed to Step 4; **[Rules 5/6]** proceed to Step 5
+- **[Rules 3/4] Step 4**: Increment round counter (X → X+1), then loop back to Step 0 for the next round
+- **[Rules 5/6] Step 5 — Safety cap**: declare ⚠️ SAFETY CAP REACHED and **STOP** if either condition is true; otherwise loop back to Step 1 for the next round:
+  - Once at least 4 rounds have elapsed, the defect count at the end of this round is not strictly less than the count 3 rounds ago (no net progress in last 3 rounds)
+  - A defect with the same file and summary (line number ignored) recurs in 3 consecutive rounds **where a fix was attempted** — recurrence caused solely by skipped fixes does not count
+
+**APPROVED note**: For all invocations (all rules), ✅ APPROVED covers the code-quality scan only. The re-commit verification and explicit human sign-off required by the Review Completion Criteria must still be completed before the change is considered fully approved.
 
 ---
 
