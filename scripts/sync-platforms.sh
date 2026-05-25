@@ -287,7 +287,8 @@ fi
 # Sync CI gates
 if [ -f "$SUPERMAN_DIR/ci/gates-default.json" ]; then
   mkdir -p "$TARGET_DIR/.superman/ci"
-  cp "$SUPERMAN_DIR/ci/gates-default.json" "$TARGET_DIR/.superman/ci/gates.json"
+  cp "$SUPERMAN_DIR/ci/gates-default.json" "$TARGET_DIR/.superman/ci/gates.json" \
+    || { echo "  ❌ Failed to install CI gates — check permissions" >&2; exit 1; }
   echo "  ✓ CI gates installed"
 fi
 
