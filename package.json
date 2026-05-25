@@ -9,6 +9,7 @@
     "validate": "node scripts/validate-skills.js",
     "test": "node scripts/validate-skills.js",
     "sync": "bash scripts/sync-platforms.sh",
+    "postinstall": "node scripts/postinstall.js",
     "prepublishOnly": "node scripts/validate-skills.js"
   },
   "files": [
