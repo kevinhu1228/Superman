@@ -170,7 +170,7 @@ sync_cursor() {
   fi
 
   if [ -f "$SUPERMAN_DIR/hooks/hooks-cursor.json" ]; then
-    cp "$SUPERMAN_DIR/hooks/hooks-cursor.json" "$TARGET_DIR/.cursor-hooks.json"
+    cp "$SUPERMAN_DIR/hooks/hooks-cursor.json" "$TARGET_DIR/.cursor-hooks.json" || return 1
     echo "  ✓ Installed Cursor hooks"
   fi
 }
