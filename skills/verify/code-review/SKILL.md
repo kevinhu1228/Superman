@@ -6,9 +6,13 @@
 
 ---
 
-## Pre-Execution: Rule Selection (REQUIRED)
+## Pre-Execution: Rule Selection
 
-Before performing any code review, you MUST ask the user to choose an execution rule. Present the following options and wait for the user's response:
+> **Invocation context — check this first:**
+> - **Interactive** (user directly invokes `/code-review` or equivalent): present the rule-selection prompt below and wait for the user's choice before proceeding.
+> - **Automated** (dispatched by `superman:subagent-dev` or any non-interactive orchestrator): skip rule selection and default to **Rule 2** (single review, auto-fix).
+
+For interactive invocations, present the following and wait for the user's response:
 
 ```
 Please select a code-review execution rule:
@@ -38,25 +42,33 @@ Please select a code-review execution rule:
 Enter the rule number (for rules 5 or 6, also specify the value of n):
 ```
 
+**Input validation**: If the user enters an invalid rule number or non-numeric input, re-prompt once with an error message. For rules 5/6, if n is not provided, zero, or negative, re-prompt for a valid positive integer before proceeding.
+
 ### Rule Execution Logic
 
 After the user selects a rule, follow the corresponding execution flow:
 
 | Rule | Fix trigger | Loop condition | End condition |
 |------|-------------|----------------|---------------|
-| 1 | Wait for user confirmation | No loop | After 1 review |
-| 2 | Auto-fix immediately | No loop | After 1 review |
+| 1 | Wait for user confirmation | No loop | After 1 review + fix verification pass |
+| 2 | Auto-fix immediately | No loop | After 1 review + fix verification pass |
 | 3 | Wait for user confirmation | Loop until 0 defects | 0 Critical/Important issues |
 | 4 | Auto-fix immediately | Loop until 0 defects | 0 Critical/Important issues |
-| 5 | Wait for user confirmation | Loop n times | After n rounds complete |
-| 6 | Auto-fix immediately | Loop n times | After n rounds complete |
+| 5 | Wait for user confirmation | Loop n times | After n rounds complete (see exit note) |
+| 6 | Auto-fix immediately | Loop n times | After n rounds complete (see exit note) |
+
+**"Fix after confirmation" (Rules 1, 3, 5)**: present ALL findings from the current round first, then wait for a single user confirmation (e.g., "proceed") to fix all findings as a batch. Do not prompt separately for each finding.
+
+**Rules 1 and 2 — fix verification pass**: after fixes are applied, run one final check to confirm no Critical/Important issues remain. If new issues are introduced by the fixes, report them but do not start another round.
 
 **Loop behavior (Rules 3–6)**:
-1. Run code review using checklist below
+1. Run the full code-review checklist (below) from scratch on the complete diff
 2. If defects found:
-   - Rule 3/5: Present findings → wait for user confirmation → fix → proceed to next round
-   - Rule 4/6: Present findings → auto-fix → proceed to next round
-3. If no defects found (or round limit reached): declare ✅ APPROVED and stop
+   - Rule 3/5: Present findings → wait for single user confirmation → fix all as a batch → proceed to next round (return to step 1)
+   - Rule 4/6: Present findings → auto-fix all → proceed to next round (return to step 1)
+3. Exit conditions:
+   - If no defects found at the end of any round: declare ✅ APPROVED and stop
+   - If round limit reached (Rules 5/6) but defects still remain: declare ⚠️ ROUND LIMIT REACHED — [N] unresolved issue(s) remain; review ended per the user-specified round limit without full approval
 4. For Rule 5/6: track current round number; announce "Round X / N" at each iteration
 
 ---
