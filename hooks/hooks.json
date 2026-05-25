@@ -18,6 +18,10 @@
           {
             "type": "command",
             "command": "bash -c 'if [ -d .superman/context ] && [ ! -f .superman/context/requirements.md ]; then echo \"[Superman] Reminder: use superman:size-classify to classify your next requirement\"; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'SDIR=$(cat .superman/.superman-dir 2>/dev/null); [ -n \"$SDIR\" ] && [ -f \"$SDIR/scripts/check-version.sh\" ] && bash \"$SDIR/scripts/check-version.sh\" --auto \"$(pwd)\"'"
           }
         ]
       }
