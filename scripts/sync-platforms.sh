@@ -135,20 +135,20 @@ sync_claude() {
   if [ -f "$TARGET_DIR/CLAUDE.md" ]; then
     if ! grep -q "Superman Plugin" "$TARGET_DIR/CLAUDE.md" 2>/dev/null; then
       echo "" >> "$TARGET_DIR/CLAUDE.md"
-      cat "$SUPERMAN_DIR/CLAUDE.md" >> "$TARGET_DIR/CLAUDE.md"
+      cat "$SUPERMAN_DIR/CLAUDE.md" >> "$TARGET_DIR/CLAUDE.md" || return 1
       echo "  ✓ Appended Superman instructions to existing CLAUDE.md"
     else
       echo "  ✓ CLAUDE.md already contains Superman instructions (skipped)"
     fi
   else
-    cp "$SUPERMAN_DIR/CLAUDE.md" "$TARGET_DIR/CLAUDE.md"
+    cp "$SUPERMAN_DIR/CLAUDE.md" "$TARGET_DIR/CLAUDE.md" || return 1
     echo "  ✓ Created CLAUDE.md"
   fi
 
   # Install hooks
   if [ -f "$SUPERMAN_DIR/hooks/hooks.json" ]; then
     mkdir -p "$TARGET_DIR/.claude"
-    cp "$SUPERMAN_DIR/hooks/hooks.json" "$TARGET_DIR/.claude/hooks.json"
+    cp "$SUPERMAN_DIR/hooks/hooks.json" "$TARGET_DIR/.claude/hooks.json" || return 1
     echo "  ✓ Installed Claude Code hooks"
   fi
 }
@@ -162,7 +162,7 @@ sync_cursor() {
     "$TARGET_DIR/.cursor-plugin/superman-plugin.json" || return 1
 
   if [ ! -f "$TARGET_DIR/.cursorrules" ]; then
-    cp "$SUPERMAN_DIR/platforms/cursor/cursorrules.md" "$TARGET_DIR/.cursorrules"
+    cp "$SUPERMAN_DIR/platforms/cursor/cursorrules.md" "$TARGET_DIR/.cursorrules" || return 1
     echo "  ✓ Created .cursorrules"
   else
     echo "  ⚠ .cursorrules already exists — manual merge may be needed"
@@ -189,13 +189,13 @@ sync_gemini() {
   if [ -f "$TARGET_DIR/GEMINI.md" ]; then
     if ! grep -q "Superman Plugin" "$TARGET_DIR/GEMINI.md" 2>/dev/null; then
       echo "" >> "$TARGET_DIR/GEMINI.md"
-      cat "$SUPERMAN_DIR/GEMINI.md" >> "$TARGET_DIR/GEMINI.md"
+      cat "$SUPERMAN_DIR/GEMINI.md" >> "$TARGET_DIR/GEMINI.md" || return 1
       echo "  ✓ Appended Superman instructions to existing GEMINI.md"
     else
       echo "  ✓ GEMINI.md already contains Superman instructions (skipped)"
     fi
   else
-    cp "$SUPERMAN_DIR/GEMINI.md" "$TARGET_DIR/GEMINI.md"
+    cp "$SUPERMAN_DIR/GEMINI.md" "$TARGET_DIR/GEMINI.md" || return 1
     echo "  ✓ Created GEMINI.md"
   fi
 }
@@ -211,10 +211,10 @@ sync_codex() {
   if [ -f "$TARGET_DIR/AGENTS.md" ]; then
     if ! grep -q "Superman Plugin" "$TARGET_DIR/AGENTS.md" 2>/dev/null; then
       echo "" >> "$TARGET_DIR/AGENTS.md"
-      cat "$SUPERMAN_DIR/AGENTS.md" >> "$TARGET_DIR/AGENTS.md"
+      cat "$SUPERMAN_DIR/AGENTS.md" >> "$TARGET_DIR/AGENTS.md" || return 1
     fi
   else
-    cp "$SUPERMAN_DIR/AGENTS.md" "$TARGET_DIR/AGENTS.md"
+    cp "$SUPERMAN_DIR/AGENTS.md" "$TARGET_DIR/AGENTS.md" || return 1
   fi
   echo "  ✓ Codex configured"
 }
@@ -238,8 +238,7 @@ sync_opencode() {
     || { echo "  ❌ Failed to create .opencode/plugins — check permissions"; return 1; }
   install_opencode_js \
     "$SUPERMAN_DIR/platforms/opencode/superman.js" \
-    "$TARGET_DIR/.opencode/plugins/superman.js" \
-    || { echo "  ❌ OpenCode SUPERMAN_ROOT injection failed — sync skipped"; return 1; }
+    "$TARGET_DIR/.opencode/plugins/superman.js" || return 1
   echo "  ✓ OpenCode plugin installed"
 }
 

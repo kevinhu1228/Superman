@@ -15,6 +15,14 @@
       "expected_exit_code": 0,
       "phase": "verify",
       "required_level": "L"
+    },
+    {
+      "id": "validate-spec",
+      "name": "Validate spec file content (no TBD placeholders, required sections present)",
+      "command": "node scripts/validate-spec.js",
+      "expected_exit_code": 0,
+      "phase": "verify",
+      "required_level": "L"
     }
   ]
 }
