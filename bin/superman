@@ -1,32 +1,46 @@
-#!/usr/bin/env bash
-# Resolve the real path of this script portably (macOS/BSD readlink has no -f flag)
-_self="$0"
-while [ -L "$_self" ]; do
-  _dir="$(cd "$(dirname "$_self")" && pwd)"
-  _link="$(readlink "$_self")"
-  case "$_link" in /*) _self="$_link" ;; *) _self="$_dir/$_link" ;; esac
-done
-_scripts="$(cd "$(dirname "$_self")/.." && pwd)/scripts"
-if [ ! -f "$_scripts/install.sh" ]; then
-  echo "superman: cannot locate scripts/install.sh (resolved to $_scripts/install.sh)" >&2
-  echo "  If superman was installed via hardlink, re-install with: npm install -g" >&2
-  exit 1
-fi
+#!/usr/bin/env node
+'use strict';
 
-case "${1:-}" in
-  update)
-    shift
-    exec "$_scripts/update.sh" "$@"
-    ;;
-  init)
-    shift
-    _target="${1:-$(pwd)}"
-    [ -d "$_target/.superman" ] && "$_scripts/check-version.sh" "$_target" 2>/dev/null || true
-    exec "$_scripts/install.sh" "$@"
-    ;;
-  *)
-    _target="${1:-$(pwd)}"
-    [ -d "$_target/.superman" ] && "$_scripts/check-version.sh" "$_target" 2>/dev/null || true
-    exec "$_scripts/install.sh" "$@"
-    ;;
-esac
+// npm on Windows generates a .cmd wrapper that invokes this file via `node`.
+// A bash shebang entry point would cause a SyntaxError in that wrapper.
+// This Node.js shim spawns bash with the real install script, which lets the
+// CLI work on Windows (Git Bash / WSL), macOS, and Linux alike.
+
+const { spawnSync } = require('child_process');
+const { existsSync } = require('fs');
+const path = require('path');
+
+const scripts = path.join(__dirname, '..', 'scripts');
+const installScript = path.join(scripts, 'install.sh');
+const updateScript = path.join(scripts, 'update.sh');
+const checkVersionScript = path.join(scripts, 'check-version.sh');
+
+if (!existsSync(installScript)) {
+  process.stderr.write(
+    `superman: cannot locate scripts/install.sh (resolved to ${installScript})\n` +
+    '  If superman was installed via hardlink, re-install with: npm install -g\n'
+  );
+  process.exit(1);
+}
+
+function run(cmd, args) {
+  const result = spawnSync(cmd, args, { stdio: 'inherit', windowsHide: false });
+  if (result.signal) {
+    process.kill(process.pid, result.signal);
+  }
+  process.exit(result.status === null ? 1 : result.status);
+}
+
+const args = process.argv.slice(2);
+const cmd = args[0];
+
+if (cmd === 'update') {
+  run('bash', [updateScript, ...args.slice(1)]);
+} else {
+  const target = (cmd === 'init' ? args[1] : args[0]) || process.cwd();
+  if (existsSync(path.join(target, '.superman')) && existsSync(checkVersionScript)) {
+    spawnSync('bash', [checkVersionScript, target], { stdio: 'inherit', windowsHide: false });
+  }
+  const installArgs = cmd === 'init' ? args.slice(1) : args;
+  run('bash', [installScript, ...installArgs]);
+}

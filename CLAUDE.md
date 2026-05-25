@@ -30,6 +30,7 @@ At the start of every session:
 
 - **Never skip phases for L-level requirements** — enforced at two levels: (1) CI gates block merge at VERIFY time; (2) the PreToolUse hook in `.claude/hooks.json` is advisory-only (prints a reminder, does not block individual tool calls)
 - **Write to .superman/ immediately** when user states requirements or makes decisions
+- **WRITE-FIRST rule** — When a user turn contains requirements, answers to clarification questions, or any decisions: the Write (or Edit) tool call targeting `.superman/` **MUST be the first tool call** in your response turn. Do NOT ask the next question, summarize, or take any other action before the Write succeeds. This is the primary defense against session compression losing unwritten context.
 - **Do not self-downgrade** requirement levels — user must explicitly approve with reason
 - **Invoke skills proactively** — if the situation matches a skill's trigger, invoke it before acting
 - **Run `openspec validate` after DEFINE phase** for M/L requirements — spec must pass before EXECUTE

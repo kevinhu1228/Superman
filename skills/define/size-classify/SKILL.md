@@ -30,7 +30,7 @@ Score the requirement on three independent dimensions (1–3 each):
 
 1. Show the three-dimension scoring table to the user; ask for scores or self-score based on the requirement description
 2. Compute `max(A, B, C)` to determine the level
-3. Immediately write the result to `.superman/context/size-classification.md`:
+3. **WRITE FIRST — before announcing the result:** Call Write to create `.superman/context/size-classification.md`. This write MUST happen before any other response content (announcement, next steps, etc.). Do not defer or skip.
 
 ```markdown
 # Requirement Classification
