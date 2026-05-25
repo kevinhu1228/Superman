@@ -6,6 +6,57 @@
 
 ---
 
+## Pre-Execution: Rule Selection (REQUIRED)
+
+Before performing any code review, you MUST ask the user to choose an execution rule. Present the following options and wait for the user's response:
+
+```
+请选择 code-review 执行规则：
+
+1. 单次 review，确认后修复
+   发现缺陷后汇总，等待用户确认后再修复
+
+2. 单次 review，自动修复
+   发现缺陷后汇总并自动执行修复
+
+3. 无限次 review，确认后修复（直到缺陷为 0）
+   每次发现缺陷后等待用户确认再修复，修复完自动进入下一轮，直到缺陷为 0
+
+4. 无限次 review，自动修复（直到缺陷为 0）
+   每次发现缺陷后自动修复，修复完自动进入下一轮，直到缺陷为 0
+
+5. 指定 n 次 review，确认后修复
+   由用户指定轮数 n，每次发现缺陷后等待用户确认再修复，完成 n 轮后结束
+
+6. 指定 n 次 review，自动修复
+   由用户指定轮数 n，每次发现缺陷后自动修复，完成 n 轮后结束
+
+请输入规则编号（选择 5 或 6 时请同时告知 n 的值）：
+```
+
+### Rule Execution Logic
+
+After the user selects a rule, follow the corresponding execution flow:
+
+| Rule | Fix trigger | Loop condition | End condition |
+|------|-------------|----------------|---------------|
+| 1 | Wait for user confirmation | No loop | After 1 review |
+| 2 | Auto-fix immediately | No loop | After 1 review |
+| 3 | Wait for user confirmation | Loop until 0 defects | 0 Critical/Important issues |
+| 4 | Auto-fix immediately | Loop until 0 defects | 0 Critical/Important issues |
+| 5 | Wait for user confirmation | Loop n times | After n rounds complete |
+| 6 | Auto-fix immediately | Loop n times | After n rounds complete |
+
+**Loop behavior (Rules 3–6)**:
+1. Run code review using checklist below
+2. If defects found:
+   - Rule 3/5: Present findings → wait for user confirmation → fix → proceed to next round
+   - Rule 4/6: Present findings → auto-fix → proceed to next round
+3. If no defects found (or round limit reached): declare ✅ APPROVED and stop
+4. For Rule 5/6: track current round number; announce "Round X / N" at each iteration
+
+---
+
 ## Two-Way Protocol (Superpowers contribution)
 
 ### Requester (implementer) responsibilities
