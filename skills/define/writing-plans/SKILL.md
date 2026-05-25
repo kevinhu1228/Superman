@@ -1,6 +1,6 @@
 # superman:writing-plans
 
-**Goal**: Generate a detailed implementation plan based on `.superman/phases/define/tasks.md`, save it to `docs/superpowers/plans/`, and provide precise guidance for the EXECUTE phase.
+**Goal**: Generate a detailed implementation plan based on `.superman/phases/define/tasks.md`, save it to `docs/superman/plans/`, and provide precise guidance for the EXECUTE phase.
 
 **Trigger**: After the DEFINE phase spec is confirmed, automatically invoked before entering EXECUTE.
 
@@ -15,7 +15,7 @@ This skill is the direct port of Superpowers writing-plans into the Superman sys
 - Each task includes: specific file paths, complete code (not pseudocode), runnable test commands and expected output
 - Follow TDD: write the failing test before each implementation step
 - Do not write `TBD`, `similar to above`, `handle edge cases`, or other placeholders
-- Plans are saved to: `docs/superpowers/plans/YYYY-MM-DD-{feature}.md`
+- Plans are saved to: `docs/superman/plans/YYYY-MM-DD-{feature}.md`
 
 ## Plan Document Format
 
