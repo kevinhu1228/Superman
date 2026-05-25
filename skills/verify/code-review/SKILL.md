@@ -23,26 +23,26 @@ Please select a code-review execution rule:
 2. Single review, auto-fix
    Summarize all findings and apply fixes automatically.
 
-3. Unlimited reviews, fix after confirmation (until 0 defects)
-   After each review, wait for user confirmation before fixing; then start the
-   next round automatically. Stop when no defects remain.
-
-4. Unlimited reviews, auto-fix (until 0 defects)
-   After each review, apply fixes automatically; then start the next round
-   automatically. Stop when no defects remain.
-
-5. n rounds of review, fix after confirmation
+3. n rounds of review, fix after confirmation
    User specifies n. After each review, wait for user confirmation before
    fixing; then start the next round. Stop after n rounds.
 
-6. n rounds of review, auto-fix
+4. n rounds of review, auto-fix
    User specifies n. After each review, apply fixes automatically; then start
    the next round. Stop after n rounds.
 
-Enter the rule number (for rules 5 or 6, also specify the value of n):
+5. Unlimited reviews, fix after confirmation (until 0 defects)
+   After each review, wait for user confirmation before fixing; then start the
+   next round automatically. Stop when no defects remain.
+
+6. Unlimited reviews, auto-fix (until 0 defects)
+   After each review, apply fixes automatically; then start the next round
+   automatically. Stop when no defects remain.
+
+Enter the rule number (for rules 3 or 4, also specify the value of n):
 ```
 
-**Input validation**: If the user enters an invalid rule number or non-numeric input, re-prompt once with an error message. For rules 5/6, if n is not provided, zero, or negative, re-prompt for a valid positive integer before proceeding.
+**Input validation**: If the user enters an invalid rule number or non-numeric input, re-prompt once with an error message. For rules 3/4, if n is not provided, zero, or negative, re-prompt for a valid positive integer before proceeding.
 
 ### Rule Execution Logic
 
@@ -52,10 +52,10 @@ After the user selects a rule, follow the corresponding execution flow:
 |------|-------------|----------------|---------------|
 | 1 | Wait for user confirmation | No loop | After 1 review + fix verification pass |
 | 2 | Auto-fix immediately | No loop | After 1 review + fix verification pass |
-| 3 | Wait for user confirmation | Loop until 0 defects | 0 Critical/Important issues |
-| 4 | Auto-fix immediately | Loop until 0 defects | 0 Critical/Important issues |
-| 5 | Wait for user confirmation | Loop n times | After n rounds complete (see exit note) |
-| 6 | Auto-fix immediately | Loop n times | After n rounds complete (see exit note) |
+| 3 | Wait for user confirmation | Loop n times | After n rounds complete (see exit note) |
+| 4 | Auto-fix immediately | Loop n times | After n rounds complete (see exit note) |
+| 5 | Wait for user confirmation | Loop until 0 defects | 0 Critical/Important issues |
+| 6 | Auto-fix immediately | Loop until 0 defects | 0 Critical/Important issues |
 
 **"Fix after confirmation" (Rules 1, 3, 5)**: present ALL findings from the current round first, then wait for a single user confirmation (e.g., "proceed") to fix all findings as a batch. Do not prompt separately for each finding.
 
@@ -68,8 +68,8 @@ After the user selects a rule, follow the corresponding execution flow:
    - Rule 4/6: Present findings → auto-fix all → proceed to next round (return to step 1)
 3. Exit conditions:
    - If no defects found at the end of any round: declare ✅ APPROVED and stop
-   - If round limit reached (Rules 5/6) but defects still remain: declare ⚠️ ROUND LIMIT REACHED — [N] unresolved issue(s) remain; review ended per the user-specified round limit without full approval
-4. For Rule 5/6: track current round number; announce "Round X / N" at each iteration
+   - If round limit reached (Rules 3/4) but defects still remain: declare ⚠️ ROUND LIMIT REACHED — [N] unresolved issue(s) remain; review ended per the user-specified round limit without full approval
+4. For Rule 3/4: track current round number; announce "Round X / N" at each iteration
 
 ---
 
