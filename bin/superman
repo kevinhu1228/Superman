@@ -12,4 +12,21 @@ if [ ! -f "$_scripts/install.sh" ]; then
   echo "  If superman was installed via hardlink, re-install with: npm install -g" >&2
   exit 1
 fi
-exec "$_scripts/install.sh" "$@"
+
+case "${1:-}" in
+  update)
+    shift
+    exec "$_scripts/update.sh" "$@"
+    ;;
+  init)
+    shift
+    _target="${1:-$(pwd)}"
+    [ -d "$_target/.superman" ] && "$_scripts/check-version.sh" "$_target" 2>/dev/null || true
+    exec "$_scripts/install.sh" "$@"
+    ;;
+  *)
+    _target="${1:-$(pwd)}"
+    [ -d "$_target/.superman" ] && "$_scripts/check-version.sh" "$_target" 2>/dev/null || true
+    exec "$_scripts/install.sh" "$@"
+    ;;
+esac
