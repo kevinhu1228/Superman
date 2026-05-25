@@ -8,13 +8,15 @@
 
 ## Execution Steps
 
+**WRITE-FIRST rule:** Each file listed below must be written via a Write/Edit tool call before moving to the next step or displaying the content to the user. Do not generate content in-memory and write it later; write immediately as the first action of each step.
+
 1. Create the directory if it does not exist:
 
 ```
 mkdir -p .superman/phases/define
 ```
 
-2. Generate `.superman/phases/define/proposal.md`:
+2. **[Write immediately]** Generate `.superman/phases/define/proposal.md`:
 
 ```
 # Change Proposal
@@ -44,9 +46,9 @@ mkdir -p .superman/phases/define
 {extracted from brainstorming Phase 2 Q5}
 ```
 
-3. For L-level requirements, also generate `.superman/phases/define/spec.md` (full technical spec including architecture, interfaces, and data model)
+3. **[Write immediately]** For L-level requirements, also generate `.superman/phases/define/spec.md` (full technical spec including architecture, interfaces, and data model)
 
-4. Generate `.superman/phases/define/tasks.md` task list (all levels):
+4. **[Write immediately]** Generate `.superman/phases/define/tasks.md` task list (all levels):
 
 ```
 # Task List
