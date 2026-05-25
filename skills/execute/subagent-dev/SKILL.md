@@ -23,6 +23,7 @@ This skill is the direct port of Superpowers subagent-driven-development into th
 1. Read `.superman/phases/define/tasks.md` and extract the full text and context for all tasks
 2. Read `.superman/phases/execute/plan.md` (if it exists) to obtain the implementation plan
 3. Create progress tracking in `.superman/phases/execute/progress.md` listing all tasks
+4. Create a TaskCreate entry for every task group or phase (e.g. "Phase 1: 后端脚手架 (T01-T05)"); call TaskUpdate to set the **first** group as `in_progress` before dispatching its first task. All other groups start as `pending`.
 
 ### For Each Task
 
@@ -59,10 +60,13 @@ Dispatch a code quality reviewer subagent to check correctness, maintainability,
 
 **5. Mark complete**
 
-Mark the task as `[x]` in `.superman/phases/execute/progress.md` and continue to the next task.
+Mark the task as `[x]` in `.superman/phases/execute/progress.md`. When all tasks in the current group are done:
+- Call TaskUpdate to set the current group's task entry to `completed`
+- Call TaskUpdate to set the next group's task entry to `in_progress` before dispatching its first task
 
 ### Completion Phase
 
 After all tasks are complete:
-1. Dispatch a final code review subagent (overall implementation quality)
-2. Invoke `superman:git-ship`
+1. Call TaskUpdate to mark the last group's task entry as `completed` (if not already done in step 5)
+2. Dispatch a final code review subagent (overall implementation quality)
+3. Invoke `superman:git-ship`
